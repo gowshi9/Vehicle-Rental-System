@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${title}">Inspection Management - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase Admin
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/dashboard/admin}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a th:href="@{/admin/deliveries}" class="nav-link"><i class="fas fa-truck"></i> Deliveries</a></li>
+                <li><a th:href="@{/admin/inspections}" class="nav-link active"><i class="fas fa-clipboard-check"></i> Inspections</a></li>
+                <li><a th:href="@{/admin/vehicles}" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1><i class="fas fa-clipboard-check"></i> Inspection Management</h1>
+                <p>Review and approve vehicle inspections submitted by drivers</p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-4 mb-4">
+                <div class="card text-center" style="background: var(--gradient-primary); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 th:text="${totalInspections}">0</h3>
+                    <p>Total Inspections</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-warning); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 th:text="${pendingCount}">0</h3>
+                    <p>Pending Approval</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-success); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 th:text="${approvedCount}">0</h3>
+                    <p>Approved</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-danger); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <h3 th:text="${rejectedCount}">0</h3>
+                    <p>Rejected</p>
+                </div>
+            </div>
+
+            <!-- Inspections Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Vehicle Inspections</h3>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Inspection ID</th>
+                                <th>Type</th>
+                                <th>Vehicle</th>
+                                <th>Driver</th>
+                                <th>Condition</th>
+                                <th>Photo</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="inspection : ${inspections}" th:if="${inspections != null}">
+                                <td>
+                                    <strong th:text="'#I' + ${inspection.id}">#I001</strong>
+                                </td>
+                                <td>
+                                    <span th:class="'type-badge ' + ${inspection.type.toLowerCase()}" 
+                                          th:text="${inspection.type}">PRE</span>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${inspection.vehicle.make + ' ' + inspection.vehicle.model}">BMW X5</strong><br>
+                                        <small th:text="${inspection.vehicle.licensePlate}" class="text-muted">ABC-123</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${inspection.inspector.username}">driver</strong><br>
+                                        <small th:text="${inspection.inspector.phone}" class="text-muted">phone</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:class="'condition-badge ' + ${inspection.condition.toLowerCase()}" 
+                                          th:text="${inspection.condition}">GOOD</span>
+                                </td>
+                                <td>
+                                    <button th:if="${inspection.photoUrl != null}" 
+                                            class="btn btn-sm btn-info" 
+                                            th:onclick="'viewPhoto(\\'' + ${inspection.photoUrl} + '\\'')"
+                                            title="View Photo">
+                                        <i class="fas fa-image"></i>
+                                    </button>
+                                    <span th:unless="${inspection.photoUrl != null}" class="text-muted">
+                                        <i class="fas fa-image-slash"></i> No Photo
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:class="'badge ' + 
+                                        (${inspection.status == 'APPROVED'} ? 'badge-success' : 
+                                         ${inspection.status == 'PENDING_APPROVAL'} ? 'badge-warning' : 'badge-danger')"
+                                          th:text="${inspection.status}">PENDING</span>
+                                </td>
+                                <td>
+                                    <div th:text="${#temporals.format(inspection.createdAt, 'MMM dd, yyyy')}">Jan 15, 2024</div>
+                                    <small th:text="${#temporals.format(inspection.createdAt, 'HH:mm')}" class="text-muted">14:30</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-primary" 
+                                                th:onclick="'viewInspection(' + ${inspection.id} + ')'"
+                                                title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button th:if="${inspection.status == 'PENDING_APPROVAL'}" 
+                                                class="btn btn-sm btn-success" 
+                                                th:onclick="'approveInspection(' + ${inspection.id} + ')'"
+                                                title="Approve">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button th:if="${inspection.status == 'PENDING_APPROVAL'}" 
+                                                class="btn btn-sm btn-danger" 
+                                                th:onclick="'rejectInspection(' + ${inspection.id} + ')'"
+                                                title="Reject">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${inspections == null or #lists.isEmpty(inspections)}">
+                                <td colspan="9" class="text-center text-muted">
+                                    <i class="fas fa-clipboard"></i><br>
+                                    No inspections found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Modal -->
+    <div id="photoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modalImage" src="" alt="Inspection Photo">
+        </div>
+    </div>
+
+    <style>
+        .type-badge { padding: 0.25rem 0.5rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; }
+        .type-badge.pre { background: var(--info); color: white; }
+        .type-badge.post { background: var(--warning); color: white; }
+        .condition-badge { padding: 0.25rem 0.5rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; }
+        .condition-badge.excellent { background: var(--success); color: white; }
+        .condition-badge.good { background: var(--info); color: white; }
+        .condition-badge.fair { background: var(--warning); color: white; }
+        .condition-badge.poor { background: var(--danger); color: white; }
+        .condition-badge.damaged { background: var(--danger); color: white; }
+        .badge { padding: 0.25rem 0.5rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .badge-success { background: var(--success); color: white; }
+        .badge-warning { background: var(--warning); color: white; }
+        .badge-danger { background: var(--danger); color: white; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .table th { background: var(--bg-secondary); font-weight: 600; }
+        .table-responsive { overflow-x: auto; }
+        .btn-group { display: flex; gap: 0.25rem; }
+        .card-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+        .nav-link.active { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); }
+        .modal-content { margin: auto; display: block; width: 80%; max-width: 700px; }
+        .close { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: #bbb; }
+        #modalImage { width: 100%; height: auto; }
+    </style>
+
+    <script>
+        function viewPhoto(photoUrl) {
+            document.getElementById('modalImage').src = photoUrl;
+            document.getElementById('photoModal').style.display = 'block';
+        }
+        
+        document.querySelector('.close').onclick = function() {
+            document.getElementById('photoModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('photoModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function viewInspection(inspectionId) {
+            alert('View inspection details for ID: ' + inspectionId);
+        }
+        
+        function approveInspection(inspectionId) {
+            if (confirm('Approve this inspection?')) {
+                const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                
+                fetch(`/admin/inspections/approve/${inspectionId}`, {
+                    method: 'POST',
+                    headers: { [header]: token }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Inspection approved successfully!');
+                        location.reload();
+                    } else {
+                        alert('Failed to approve inspection: ' + data.message);
+                    }
+                });
+            }
+        }
+        
+        function rejectInspection(inspectionId) {
+            const reason = prompt('Please provide a reason for rejection:');
+            if (reason) {
+                const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                
+                fetch(`/admin/inspections/reject/${inspectionId}`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        [header]: token 
+                    },
+                    body: `reason=${encodeURIComponent(reason)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Inspection rejected');
+                        location.reload();
+                    } else {
+                        alert('Failed to reject inspection: ' + data.message);
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Add Vehicle - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Add New Vehicle</h1>
+            <form action="/admin/vehicles/create" method="post">
+                <input type="hidden" name="_csrf" th:value="${_csrf?.token}" th:if="${_csrf}"/>
+                <div class="form-group">
+                    <label class="form-label">License Plate</label>
+                    <input type="text" name="licensePlate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Make</label>
+                    <input type="text" name="make" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <input type="text" name="model" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Year</label>
+                    <input type="number" name="year" class="form-control" min="1990" max="2025" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-control" required>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Hatchback">Hatchback</option>
+                        <option value="Coupe">Coupe</option>
+                        <option value="Convertible">Convertible</option>
+                        <option value="Truck">Truck</option>
+                        <option value="Van">Van</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Daily Rate ($)</label>
+                    <input type="number" name="dailyRate" class="form-control" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Color</label>
+                    <input type="text" name="color" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mileage</label>
+                    <input type="number" name="mileage" class="form-control" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fuel Type</label>
+                    <select name="fuelType" class="form-control" required>
+                        <option value="Gasoline">Gasoline</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Hybrid">Hybrid</option>
+                        <option value="Electric">Electric</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Transmission</label>
+                    <select name="transmission" class="form-control" required>
+                        <option value="Automatic">Automatic</option>
+                        <option value="Manual">Manual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Seats</label>
+                    <input type="number" name="seats" class="form-control" min="2" max="12" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <!-- PHOTO UPLOAD SECTION -->
+                <div class="form-group" style="background: #f0f8ff; padding: 20px; border: 2px dashed #007bff; border-radius: 8px; margin: 20px 0;">
+                    <label class="form-label" style="font-weight: bold; color: #007bff;">
+                        <i class="fas fa-camera"></i> 📷 Vehicle Photo
+                    </label>
+                    <input type="file" id="vehiclePhoto" accept="image/*" class="form-control" style="border: 2px solid #007bff; margin-bottom: 10px;">
+                    <small style="color: #666;">Choose a photo from your device (JPG, PNG, GIF)</small>
+                    <div id="photoPreview" style="display: none; margin-top: 15px; text-align: center;">
+                        <img id="previewImg" style="max-width: 300px; max-height: 200px; border: 2px solid #007bff; border-radius: 5px;">
+                    </div>
+                    <input type="hidden" name="photoUrl" id="photoUrl">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary">Create Vehicle</button>
+                    <a th:href="@{/admin/vehicles}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('vehiclePhoto').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('photoPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+                
+                // Upload file
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                try {
+                    console.log('Uploading file:', file.name);
+                    const response = await fetch('/api/upload/vehicle-photo', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    const result = await response.json();
+                    console.log('Response data:', result);
+                    
+                    if (result.url) {
+                        document.getElementById('photoUrl').value = result.url;
+                        alert('Photo uploaded successfully!');
+                    } else {
+                        alert('Failed to upload photo: ' + (result.error || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    alert('Failed to upload photo: ' + error.message);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

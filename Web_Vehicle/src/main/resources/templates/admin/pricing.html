@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Pricing Management - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-dollar-sign"></i> Pricing Strategy Management</h1>
+            <a th:href="@{/dashboard/admin}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+
+        <!-- Current Strategies -->
+        <div class="card">
+            <h2>Active Pricing Strategies</h2>
+            <div class="strategy-grid">
+                <div th:each="strategy : ${strategies}" class="strategy-card">
+                    <div class="strategy-header">
+                        <h3 th:text="${strategy.key}">weekend</h3>
+                        <span class="strategy-type">Dynamic Pricing</span>
+                    </div>
+                    <div class="strategy-details">
+                        <div class="detail-row">
+                            <span>Type:</span>
+                            <span th:text="${strategy.value.class.simpleName}">WeekendPricing</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Status:</span>
+                            <span class="status active">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing vs Promotions Comparison -->
+        <div class="card">
+            <h2>Pricing Strategies vs Promotions</h2>
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Pricing Strategies</th>
+                            <th>Promotions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Purpose</strong></td>
+                            <td>Dynamic base price calculation</td>
+                            <td>Discount codes & marketing offers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Application</strong></td>
+                            <td>Automatic based on date/conditions</td>
+                            <td>Manual entry by customer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Examples</strong></td>
+                            <td>Weekend +15%, Summer +20%</td>
+                            <td>SAVE25 = 25% off, BLACKFRIDAY</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stacking</strong></td>
+                            <td>Base calculation first</td>
+                            <td>Applied after pricing strategy</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pricing Calculator -->
+        <div class="card">
+            <h2>Pricing Calculator</h2>
+            <div class="calculator-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Strategy:</label>
+                        <select id="strategySelect">
+                            <option th:each="strategy : ${strategies}" 
+                                    th:value="${strategy.key}" 
+                                    th:text="${strategy.key}">weekend</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Base Rate ($):</label>
+                        <input type="number" id="baseRate" value="50" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Test Date:</label>
+                        <input type="date" id="testDate">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" onclick="calculatePrice()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                    </div>
+                </div>
+                <div id="calculationResult" class="calculation-result"></div>
+            </div>
+        </div>
+
+        <!-- Strategy Details -->
+        <div class="card">
+            <h2>Strategy Implementation Details</h2>
+            <div class="strategy-details-grid">
+                <div class="detail-card">
+                    <h3><i class="fas fa-calendar-week"></i> Weekend Pricing</h3>
+                    <p><strong>Logic:</strong> +15% markup on Friday, Saturday, Sunday</p>
+                    <p><strong>Code:</strong> <code>weekend</code></p>
+                    <p><strong>Business Rule:</strong> Higher demand on weekends</p>
+                </div>
+                <div class="detail-card">
+                    <h3><i class="fas fa-snowflake"></i> Seasonal Pricing</h3>
+                    <p><strong>Logic:</strong> Winter +25%, Summer +20%, Regular seasons normal</p>
+                    <p><strong>Code:</strong> <code>seasonal</code></p>
+                    <p><strong>Business Rule:</strong> Weather-based demand</p>
+                </div>
+                <div class="detail-card">
+                    <h3><i class="fas fa-calendar-day"></i> Weekday Pricing</h3>
+                    <p><strong>Logic:</strong> Standard rates Monday-Thursday</p>
+                    <p><strong>Code:</strong> <code>weekday</code></p>
+                    <p><strong>Business Rule:</strong> Lower demand on weekdays</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .strategy-card { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #007bff; }
+        .strategy-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .strategy-type { background: #007bff; color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .status.active { color: #28a745; font-weight: bold; }
+        .comparison-table table { width: 100%; border-collapse: collapse; }
+        .comparison-table th, .comparison-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #ddd; }
+        .comparison-table th { background: #f8f9fa; font-weight: 600; }
+        .calculator-form .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end; }
+        .calculation-result { margin-top: 1rem; padding: 1rem; background: #e7f3ff; border-radius: 8px; }
+        .strategy-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .detail-card { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; }
+        .detail-card h3 { color: #007bff; margin-bottom: 1rem; }
+        code { background: #f1f3f4; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; }
+    </style>
+
+    <script>
+        // Set today's date as default
+        document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
+
+        function calculatePrice() {
+            const strategy = document.getElementById('strategySelect').value;
+            const baseRate = document.getElementById('baseRate').value;
+            const testDate = document.getElementById('testDate').value;
+            
+            fetch(`/admin/pricing/test?strategy=${strategy}&baseRate=${baseRate}&date=${testDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('calculationResult').innerHTML = 
+                            `<div class="alert alert-danger">${data.error}</div>`;
+                    } else {
+                        const markup = data.calculatedRate - data.baseRate;
+                        const percentage = ((data.calculatedRate / data.baseRate - 1) * 100).toFixed(1);
+                        
+                        document.getElementById('calculationResult').innerHTML = `
+                            <h4>Calculation Result</h4>
+                            <div class="result-grid">
+                                <div><strong>Strategy:</strong> ${data.strategy}</div>
+                                <div><strong>Base Rate:</strong> $${data.baseRate}</div>
+                                <div><strong>Final Rate:</strong> $${data.calculatedRate}</div>
+                                <div><strong>Markup:</strong> $${markup.toFixed(2)} (${percentage}%)</div>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('calculationResult').innerHTML = 
+                        `<div class="alert alert-danger">Error calculating price</div>`;
+                });
+        }
+    </script>
+</body>
+</html>

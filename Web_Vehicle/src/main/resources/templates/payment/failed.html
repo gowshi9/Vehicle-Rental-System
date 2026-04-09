@@ -1,0 +1,64 @@
+<div class="container" style="padding: 4rem 0; text-align: center;">
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <div style="font-size: 4rem; color: var(--danger); margin-bottom: 2rem;">❌</div>
+        
+        <h1 style="color: var(--danger); margin-bottom: 1rem;">Payment Failed</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 2rem;">
+            We were unable to process your payment. Please try again or use a different payment method.
+        </p>
+
+        <div class="failure-reasons" style="background: var(--light); padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h3>Common Reasons for Payment Failure:</h3>
+            <div style="text-align: left; margin-top: 1rem;">
+                <p>💳 <strong>Insufficient Funds:</strong> Check your account balance</p>
+                <p>🔒 <strong>Card Declined:</strong> Contact your bank to authorize the transaction</p>
+                <p>📅 <strong>Expired Card:</strong> Verify your card expiration date</p>
+                <p>🔢 <strong>Incorrect Details:</strong> Double-check card number, CVV, and billing address</p>
+                <p>🌐 <strong>Network Issue:</strong> Try again in a few minutes</p>
+            </div>
+        </div>
+
+        <div class="retry-options" style="margin-bottom: 2rem;">
+            <h3>What You Can Do:</h3>
+            <div class="grid grid-2" style="gap: 1rem; margin-top: 1rem;">
+                <button class="btn btn-primary" onclick="retryPayment()">
+                    Try Again
+                </button>
+                <button class="btn" onclick="changePaymentMethod()">
+                    Different Payment Method
+                </button>
+            </div>
+        </div>
+
+        <div class="alternative-actions">
+            <a href="/customer/bookings" class="btn" style="margin-right: 1rem;">View My Bookings</a>
+            <a href="/contact" class="btn btn-primary">Contact Support</a>
+        </div>
+
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--light);">
+            <p style="color: var(--muted); font-size: 0.9rem;">
+                Still having trouble? <a href="/contact">Contact our support team</a> or call +1 (555) 123-4567
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function retryPayment() {
+    const bookingId = new URLSearchParams(window.location.search).get('booking');
+    if (bookingId) {
+        window.location.href = `/payment/checkout/${bookingId}`;
+    } else {
+        window.history.back();
+    }
+}
+
+function changePaymentMethod() {
+    const bookingId = new URLSearchParams(window.location.search).get('booking');
+    if (bookingId) {
+        window.location.href = `/payment/checkout/${bookingId}?method=change`;
+    } else {
+        window.history.back();
+    }
+}
+</script>

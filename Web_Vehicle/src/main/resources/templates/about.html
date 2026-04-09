@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">About Us - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">DriveEase</a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/}" class="nav-link">Home</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link">Vehicles</a></li>
+                <li><a th:href="@{/about}" class="nav-link">About</a></li>
+                <li><a th:href="@{/contact}" class="nav-link">Contact</a></li>
+                <li><a th:href="@{/login}" class="nav-link">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>About DriveEase</h1>
+                <p>Your trusted partner in premium vehicle rentals</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container section-padding">
+        <div class="card">
+            <h2>Our Story</h2>
+            <p>DriveEase has been serving customers with premium vehicle rental services since 2020. We pride ourselves on providing reliable, clean, and well-maintained vehicles for all your transportation needs.</p>
+            
+            <h3>Our Mission</h3>
+            <p>To provide exceptional vehicle rental experiences through quality service, competitive pricing, and customer satisfaction.</p>
+            
+            <h3>Why Choose DriveEase?</h3>
+            <ul>
+                <li>Wide selection of vehicles</li>
+                <li>Competitive pricing</li>
+                <li>24/7 customer support</li>
+                <li>Easy online booking</li>
+                <li>Flexible rental terms</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="text-center">&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - DriveEase</title>
+    <link rel="stylesheet" href="/css/theme.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/vehicles" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="card" style="max-width: 400px; margin: 0 auto;">
+                <div class="text-center mb-4">
+                    <div class="feature-icon" style="color: var(--primary); font-size: 3rem; margin-bottom: 1rem;">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <h2>Welcome Back</h2>
+                    <p class="text-muted">Sign in to your DriveEase account</p>
+                </div>
+
+                <form method="post" action="/login">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <h5>Demo Accounts:</h5>
+                    <div style="font-size: var(--font-size-sm); color: var(--text-muted);">
+                        <p><strong>Admin:</strong> admin / Admin123!</p>
+                        <p><strong>Finance:</strong> finance / Finance123!</p>
+                        <p><strong>Customer:</strong> customer / Customer123!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

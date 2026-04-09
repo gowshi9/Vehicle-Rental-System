@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Customer Dashboard - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/dashboard/customer}" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a th:href="@{/customer/bookings}" class="nav-link"><i class="fas fa-calendar"></i> My Bookings</a></li>
+                <li><form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </form></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;">
+        <!-- Header -->
+        <div class="dashboard-header" style="margin-bottom: 2rem;">
+            <h1 style="margin-bottom: 0.5rem;">Welcome back, John!</h1>
+            <p class="text-muted" style="font-size: var(--font-size-lg);">Manage your bookings and explore new vehicles</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">3</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Active Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--success); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-route"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">12</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Total Trips</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--accent); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">$1,250</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Total Spent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--secondary); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">4.8</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Rating</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-2" style="gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="card">
+                <div class="card-icon" style="background: var(--primary); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Book a Vehicle</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Browse our premium fleet and make a new reservation</p>
+                <a href="/vehicles" class="btn btn-primary">
+                    <i class="fas fa-car"></i> Browse Vehicles
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--success); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">My Bookings</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">View and manage your current and past bookings</p>
+                <a href="/customer/bookings" class="btn btn-success">
+                    <i class="fas fa-list"></i> View Bookings
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--accent); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Account Settings</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Update your profile and preferences</p>
+                <a href="/customer/profile" class="btn btn-accent">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--secondary); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Support</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Get help or contact customer service</p>
+                <a href="/contact" class="btn btn-secondary">
+                    <i class="fas fa-phone"></i> Contact Support
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;"><i class="fas fa-clock"></i> Recent Bookings</h3>
+                <a href="/customer/bookings" class="btn btn-outline btn-sm">View All</a>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Vehicle</th>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Dates</th>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Status</th>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Total</th>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-size: var(--font-size-sm);">Toyota Corolla</td>
+                            <td style="font-size: var(--font-size-sm); color: var(--text-muted);">Dec 15-18, 2024</td>
+                            <td><span class="badge" style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: var(--radius); font-size: var(--font-size-xs);">Confirmed</span></td>
+                            <td style="font-size: var(--font-size-sm); font-weight: 600;">$135.00</td>
+                            <td><a href="#" class="btn btn-outline btn-sm">View Details</a></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: var(--font-size-sm);">Honda CR-V</td>
+                            <td style="font-size: var(--font-size-sm); color: var(--text-muted);">Dec 20-25, 2024</td>
+                            <td><span class="badge" style="background: var(--warning); color: white; padding: 0.25rem 0.5rem; border-radius: var(--radius); font-size: var(--font-size-xs);">Pending</span></td>
+                            <td style="font-size: var(--font-size-sm); font-weight: 600;">$325.00</td>
+                            <td><a href="#" class="btn btn-outline btn-sm">View Details</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Loyalty Program -->
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-gift"></i> Loyalty Program</h3>
+            <div class="grid grid-2" style="gap: 2rem;">
+                <div>
+                    <div style="margin-bottom: 1rem;">
+                        <p style="font-size: var(--font-size-sm); margin-bottom: 0.5rem;"><strong>Current Points:</strong> <span style="color: var(--primary); font-weight: 700;">1,250</span></p>
+                        <p style="font-size: var(--font-size-sm); color: var(--text-muted);"><strong>Next Reward:</strong> Free upgrade (500 points needed)</p>
+                    </div>
+                    <div class="progress-container" style="background: var(--bg-tertiary); height: 8px; border-radius: var(--radius-full); overflow: hidden;">
+                        <div class="progress-bar" style="background: var(--primary); height: 100%; width: 75%; border-radius: var(--radius-full); transition: var(--transition);"></div>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; font-size: var(--font-size-lg);">Available Rewards</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: var(--font-size-sm);">
+                            <span style="font-size: var(--font-size-lg);">🎁</span>
+                            <span>Free day rental (2,000 points)</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: var(--font-size-sm);">
+                            <span style="font-size: var(--font-size-lg);">⬆️</span>
+                            <span>Vehicle upgrade (1,500 points)</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; font-size: var(--font-size-sm);">
+                            <span style="font-size: var(--font-size-lg);">🚗</span>
+                            <span>Premium cleaning (500 points)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="text-align: center; color: var(--text-muted); font-size: var(--font-size-sm);">&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

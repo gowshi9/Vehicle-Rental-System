@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${title}">Payment Checkout - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">DriveEase</a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/dashboard}" class="nav-link">Dashboard</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link">Vehicles</a></li>
+            </ul>
+        </div>
+    </nav>
+
+<div class="container" style="padding: 2rem 0;">
+    <h1>Payment Checkout</h1>
+    <p>Complete your booking payment securely</p>
+
+    <div class="grid grid-2">
+        <!-- Payment Methods -->
+        <div class="card">
+            <h3>Select Payment Method</h3>
+            
+            <!-- Payment Method Tabs -->
+            <div class="payment-tabs" style="display: flex; margin-bottom: 2rem; border-bottom: 1px solid var(--light);">
+                <button class="tab-btn active" onclick="showPaymentMethod('creditCard')">Credit Card</button>
+                <button class="tab-btn" onclick="showPaymentMethod('paypal')">PayPal</button>
+                <button class="tab-btn" onclick="showPaymentMethod('mock')">Test Payment</button>
+            </div>
+
+            <!-- Credit Card Form -->
+            <div id="creditCardForm" class="payment-method active">
+                <form id="cardPaymentForm">
+                    <input type="hidden" name="bookingId" th:value="${bookingId}">
+                    <input type="hidden" name="paymentMethod" value="CREDIT_CARD">
+                    <input type="hidden" name="gatewayType" value="STRIPE">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Card Number *</label>
+                        <input type="text" name="cardNumber" placeholder="1234 5678 9012 3456" 
+                               maxlength="19" required onkeyup="formatCardNumber(this)">
+                        <div class="card-type-indicator" id="cardType"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Cardholder Name *</label>
+                        <input type="text" name="cardHolderName" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Expiry Month *</label>
+                            <select name="expiryMonth" required>
+                                <option value="">Month</option>
+                                <option value="01">01 - January</option>
+                                <option value="02">02 - February</option>
+                                <option value="03">03 - March</option>
+                                <option value="04">04 - April</option>
+                                <option value="05">05 - May</option>
+                                <option value="06">06 - June</option>
+                                <option value="07">07 - July</option>
+                                <option value="08">08 - August</option>
+                                <option value="09">09 - September</option>
+                                <option value="10">10 - October</option>
+                                <option value="11">11 - November</option>
+                                <option value="12">12 - December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Expiry Year *</label>
+                            <select name="expiryYear" required>
+                                <option value="">Year</option>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CVV *</label>
+                        <input type="text" name="cvv" placeholder="123" maxlength="4" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="saveCard"> Save card for future payments
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%;">Pay with Credit Card</button>
+                </form>
+            </div>
+
+            <!-- PayPal Form -->
+            <div id="paypalForm" class="payment-method">
+                <form id="paypalPaymentForm">
+                    <input type="hidden" name="bookingId" th:value="${bookingId}">
+                    <input type="hidden" name="paymentMethod" value="PAYPAL">
+                    <input type="hidden" name="gatewayType" value="PAYPAL">
+                    
+                    <div class="paypal-info" style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">💳</div>
+                        <h4>Pay with PayPal</h4>
+                        <p>You will be redirected to PayPal to complete your payment securely.</p>
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%; background: #0070ba;">
+                        Continue with PayPal
+                    </button>
+                </form>
+            </div>
+
+            <!-- Mock Payment Form -->
+            <div id="mockForm" class="payment-method">
+                <form id="mockPaymentForm">
+                    <input type="hidden" name="bookingId" th:value="${bookingId}">
+                    <input type="hidden" name="paymentMethod" value="CREDIT_CARD">
+                    <input type="hidden" name="gatewayType" value="MOCK_GATEWAY">
+                    
+                    <div class="mock-info" style="background: var(--warning); color: white; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <strong>Test Payment Gateway</strong><br>
+                        Use these test card numbers:<br>
+                        • Success: 4111111111111111<br>
+                        • Declined: 4111111111110000<br>
+                        • Expired: 4111111111111111<br>
+                        • Invalid CVV: 4111111111112222
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Test Card Number</label>
+                        <input type="text" name="cardNumber" value="4111111111111111" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Cardholder Name</label>
+                        <input type="text" name="cardHolderName" value="Test User" required>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Expiry Month</label>
+                            <input type="text" name="expiryMonth" value="12" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Expiry Year</label>
+                            <input type="text" name="expiryYear" value="2025" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CVV</label>
+                        <input type="text" name="cvv" value="123" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning" style="width: 100%;">
+                        Process Test Payment
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="card">
+            <h3>Order Summary</h3>
+            <div class="order-details">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span>Booking ID:</span>
+                    <span th:text="'#BK' + ${bookingId}">#BK123</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span>Vehicle:</span>
+                    <span>Toyota Corolla 2023</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span>Rental Period:</span>
+                    <span>3 days</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span>Daily Rate:</span>
+                    <span>$45.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span>Subtotal:</span>
+                    <span>$135.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span>Taxes & Fees:</span>
+                    <span>$13.50</span>
+                </div>
+                <hr style="border-color: var(--light); margin: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold;">
+                    <span>Total:</span>
+                    <span style="color: var(--secondary);">$148.50</span>
+                </div>
+            </div>
+
+            <div class="security-info" style="margin-top: 2rem; padding: 1rem; background: var(--light); border-radius: 8px;">
+                <h4>🔒 Secure Payment</h4>
+                <p style="font-size: 0.9rem; margin: 0;">Your payment information is encrypted and secure. We never store your full card details.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-tabs {
+    gap: 1rem;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 1rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    color: var(--secondary);
+    border-bottom-color: var(--secondary);
+}
+
+.payment-method {
+    display: none;
+}
+
+.payment-method.active {
+    display: block;
+}
+
+.card-type-indicator {
+    font-size: 0.9rem;
+    color: var(--secondary);
+    margin-top: 0.5rem;
+}
+</style>
+
+<script>
+function showPaymentMethod(method) {
+    // Hide all payment methods
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    // Show selected method
+    document.getElementById(method + 'Form').classList.add('active');
+    event.target.classList.add('active');
+}
+
+function formatCardNumber(input) {
+    let value = input.value.replace(/\D/g, '');
+    let formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+    input.value = formattedValue;
+    
+    // Detect card type
+    const cardType = document.getElementById('cardType');
+    if (value.startsWith('4')) {
+        cardType.textContent = 'VISA';
+    } else if (value.startsWith('5') || value.startsWith('2')) {
+        cardType.textContent = 'MASTERCARD';
+    } else if (value.startsWith('3')) {
+        cardType.textContent = 'AMERICAN EXPRESS';
+    } else {
+        cardType.textContent = '';
+    }
+}
+
+// Form submission handlers
+document.getElementById('cardPaymentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    await processPayment(this, 'STRIPE');
+});
+
+document.getElementById('paypalPaymentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    await processPayment(this, 'PAYPAL');
+});
+
+document.getElementById('mockPaymentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    await processPayment(this, 'MOCK_GATEWAY');
+});
+
+async function processPayment(form, gatewayType) {
+    const formData = new FormData(form);
+    const paymentData = {
+        bookingId: parseInt(formData.get('bookingId')),
+        paymentMethod: formData.get('paymentMethod'),
+        gatewayType: gatewayType,
+        amount: 148.50,
+        currencyCode: 'USD',
+        cardNumber: formData.get('cardNumber')?.replace(/\s/g, ''),
+        cardHolderName: formData.get('cardHolderName'),
+        expiryMonth: formData.get('expiryMonth'),
+        expiryYear: formData.get('expiryYear'),
+        cvv: formData.get('cvv'),
+        saveCard: formData.get('saveCard') === 'on'
+    };
+
+    try {
+        VehicleRental.showToast('Processing payment...', 'info');
+        
+        const response = await VehicleRental.apiCall('/payment/process', {
+            method: 'POST',
+            body: JSON.stringify(paymentData)
+        });
+
+        if (response.success) {
+            if (response.redirectUrl) {
+                // PayPal redirect
+                window.location.href = response.redirectUrl;
+            } else {
+                // Direct payment success
+                VehicleRental.showToast('Payment successful!', 'success');
+                setTimeout(() => {
+                    window.location.href = '/payment/success';
+                }, 2000);
+            }
+        } else {
+            VehicleRental.showToast('Payment failed: ' + response.message, 'error');
+        }
+    } catch (error) {
+        console.error('Payment error:', error);
+        VehicleRental.showToast('Payment processing failed', 'error');
+    }
+}
+</script>
+
+    <footer>
+        <div class="container">
+            <p class="text-center">&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

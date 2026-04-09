@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Patterns Demo - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Design Patterns Demonstration</h1>
+            
+            <!-- Bridge Pattern Demo -->
+            <div class="card">
+                <h2>Bridge Pattern - Notifications</h2>
+                <p>Decouple notification abstraction from implementation (Email/SMS)</p>
+                <form id="notificationForm">
+                    <div class="form-group">
+                        <label class="form-label">Notification Type</label>
+                        <select name="type" class="form-control">
+                            <option value="email">Email Notification</option>
+                            <option value="sms">SMS Notification</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Recipient</label>
+                        <input type="text" name="to" class="form-control" value="customer@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-control" value="Booking Confirmation" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea name="body" class="form-control" rows="3" required>Your rental has been confirmed!</textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="sendNotification()">Send Notification</button>
+                </form>
+                <div id="notificationResult" style="margin-top: 1rem;"></div>
+            </div>
+            
+            <!-- Mediator Pattern Demo -->
+            <div class="card">
+                <h2>Mediator Pattern - Complete Booking Flow</h2>
+                <p>Orchestrate booking through mediator without tight coupling</p>
+                <form id="bookingForm">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Customer ID</label>
+                            <input type="number" name="customerId" class="form-control" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Vehicle Category</label>
+                            <select name="vehicleCategory" class="form-control">
+                                <option value="Sedan">Sedan</option>
+                                <option value="SUV">SUV</option>
+                                <option value="Hatchback">Hatchback</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pickup Date & Time</label>
+                            <input type="datetime-local" name="pickupAt" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dropoff Date & Time</label>
+                            <input type="datetime-local" name="dropoffAt" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="createBooking()">Create Booking (Mediator)</button>
+                </form>
+                <div id="bookingResult" style="margin-top: 1rem;"></div>
+            </div>
+            
+            <!-- CQRS Pattern Demo -->
+            <div class="card">
+                <h2>CQRS Pattern - Separated Read/Write Models</h2>
+                <p>Query optimized read models separate from command operations</p>
+                <button class="btn btn-outline" onclick="loadKpis()">Load KPIs</button>
+                <button class="btn btn-outline" onclick="loadCacheStats()">Cache Stats</button>
+                <div id="cqrsResult" style="margin-top: 1rem;"></div>
+            </div>
+            
+            <!-- Visitor Pattern Demo -->
+            <div class="card">
+                <h2>Visitor Pattern - Revenue Report Generation</h2>
+                <p>Generate reports by visiting different entity types without modifying them</p>
+                <button class="btn btn-primary" onclick="generateRevenueReport()">Generate Revenue Report</button>
+                <div id="visitorResult" style="margin-top: 1rem;"></div>
+            </div>
+            
+            <!-- Flyweight Pattern Demo -->
+            <div class="card">
+                <h2>Flyweight Pattern - Vehicle Specifications Cache</h2>
+                <p>Shared immutable vehicle specs to reduce memory usage and improve performance</p>
+                <button class="btn btn-primary" onclick="testFlyweight()">Test Flyweight Cache</button>
+                <div id="flyweightResult" style="margin-top: 1rem;"></div>
+            </div>
+            
+            <a th:href="@{/dashboard/admin}" class="btn">← Back to Dashboard</a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const pickup = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+            const dropoff = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+            
+            document.querySelector('[name="pickupAt"]').value = pickup.toISOString().slice(0, 16);
+            document.querySelector('[name="dropoffAt"]').value = dropoff.toISOString().slice(0, 16);
+        });
+        
+        function sendNotification() {
+            const form = document.getElementById('notificationForm');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            
+            fetch('/api/patterns/notification?' + params, {method: 'POST'})
+                .then(response => response.text())
+                .then(result => {
+                    document.getElementById('notificationResult').innerHTML = 
+                        '<div class="alert alert-success">' + result + '</div>';
+                })
+                .catch(error => {
+                    document.getElementById('notificationResult').innerHTML = 
+                        '<div class="alert alert-danger">Error sending notification</div>';
+                });
+        }
+        
+        function createBooking() {
+            const form = document.getElementById('bookingForm');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            
+            fetch('/api/c/book', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: params
+            })
+            .then(response => response.json())
+            .then(result => {
+                const alertClass = result.success ? 'alert-success' : 'alert-danger';
+                document.getElementById('bookingResult').innerHTML = 
+                    '<div class="alert ' + alertClass + '">' +
+                    '<strong>Booking Result:</strong><br>' +
+                    'Success: ' + result.success + '<br>' +
+                    'Message: ' + result.message + '<br>' +
+                    (result.rentalId ? 'Rental ID: ' + result.rentalId + '<br>' : '') +
+                    (result.totalAmount ? 'Total: $' + result.totalAmount : '') +
+                    '</div>';
+            });
+        }
+        
+        function loadKpis() {
+            fetch('/api/q/kpis')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '<h4>System KPIs</h4><ul>';
+                    Object.entries(data).forEach(([key, value]) => {
+                        html += '<li><strong>' + key + ':</strong> ' + value + '</li>';
+                    });
+                    html += '</ul>';
+                    document.getElementById('cqrsResult').innerHTML = html;
+                });
+        }
+        
+        function loadCacheStats() {
+            fetch('/api/q/cache-stats')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '<h4>Flyweight Cache Statistics</h4><ul>';
+                    Object.entries(data).forEach(([key, value]) => {
+                        html += '<li><strong>' + key + ':</strong> ' + value + '</li>';
+                    });
+                    html += '</ul>';
+                    document.getElementById('cqrsResult').innerHTML = html;
+                });
+        }
+        
+        function generateRevenueReport() {
+            fetch('/api/patterns/visitor/revenue')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '<h4>Revenue Report (Visitor Pattern)</h4>';
+                    html += '<div class="table-container"><table class="table">';
+                    html += '<tr><th>Metric</th><th>Value</th></tr>';
+                    html += '<tr><td>Total Revenue</td><td>$' + data.totalRevenue + '</td></tr>';
+                    html += '<tr><td>Rental Count</td><td>' + data.rentalCount + '</td></tr>';
+                    html += '<tr><td>Vehicle Count</td><td>' + data.vehicleCount + '</td></tr>';
+                    html += '<tr><td>User Count</td><td>' + data.userCount + '</td></tr>';
+                    html += '<tr><td>Average Rental Value</td><td>$' + data.averageRentalValue + '</td></tr>';
+                    html += '<tr><td>Generated At</td><td>' + new Date(data.timestamp).toLocaleString() + '</td></tr>';
+                    html += '</table></div>';
+                    document.getElementById('visitorResult').innerHTML = html;
+                });
+        }
+        
+        function testFlyweight() {
+            const specs = [
+                'Toyota|Camry|2.5L|5|Gasoline|Automatic',
+                'Honda|Civic|1.8L|5|Gasoline|Manual',
+                'Toyota|Camry|2.5L|5|Gasoline|Automatic', // Duplicate for cache hit
+                'Ford|Explorer|3.5L|7|Gasoline|Automatic',
+                'Honda|Civic|1.8L|5|Gasoline|Manual' // Another duplicate
+            ];
+            
+            let results = [];
+            let completed = 0;
+            
+            specs.forEach((spec, index) => {
+                fetch('/api/patterns/flyweight?spec=' + encodeURIComponent(spec))
+                    .then(response => response.text())
+                    .then(result => {
+                        results[index] = (index + 1) + '. ' + result;
+                        completed++;
+                        
+                        if (completed === specs.length) {
+                            document.getElementById('flyweightResult').innerHTML = 
+                                '<div class="alert alert-info">' +
+                                '<strong>Flyweight Test Results:</strong><br>' +
+                                results.join('<br>') +
+                                '<br><br><em>Check cache stats above to see hit/miss ratios!</em>' +
+                                '</div>';
+                            
+                            // Auto-refresh cache stats
+                            setTimeout(loadCacheStats, 500);
+                        }
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

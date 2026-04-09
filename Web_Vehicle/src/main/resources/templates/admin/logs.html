@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">System Logs - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>System Logs</h1>
+            <div style="margin-bottom: 1rem; display: flex; gap: 1rem;">
+                <select class="form-control" name="level" id="logLevel" style="width: auto;">
+                    <option value="">All Logs</option>
+                    <option value="ERROR">Error Logs</option>
+                    <option value="WARN">Warning Logs</option>
+                    <option value="INFO">Info Logs</option>
+                </select>
+                <input type="date" class="form-control" name="date" id="logDate" style="width: auto;">
+                <button class="btn btn-outline" onclick="filterLogs()">Filter</button>
+                <button class="btn btn-primary" onclick="exportLogs()">Export Logs</button>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Level</th>
+                            <th>Message</th>
+                            <th>User</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-10-13 20:15:32</td>
+                            <td><span class="badge badge-success">INFO</span></td>
+                            <td>User login successful</td>
+                            <td>admin</td>
+                            <td>192.168.1.100</td>
+                        </tr>
+                        <tr>
+                            <td>2024-10-13 20:10:15</td>
+                            <td><span class="badge badge-warning">WARN</span></td>
+                            <td>Failed login attempt</td>
+                            <td>unknown</td>
+                            <td>192.168.1.105</td>
+                        </tr>
+                        <tr>
+                            <td>2024-10-13 20:05:22</td>
+                            <td><span class="badge badge-danger">ERROR</span></td>
+                            <td>Database connection timeout</td>
+                            <td>system</td>
+                            <td>localhost</td>
+                        </tr>
+                        <tr>
+                            <td>2024-10-13 19:58:45</td>
+                            <td><span class="badge badge-success">INFO</span></td>
+                            <td>New vehicle added</td>
+                            <td>admin</td>
+                            <td>192.168.1.100</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <a th:href="@{/dashboard/admin}" class="btn">← Back to Dashboard</a>
+        </div>
+    </div>
+    <script>
+        function exportLogs() {
+            window.location.href = '/admin/logs/export';
+        }
+        function filterLogs() {
+            const logLevel = document.getElementById('logLevel').value;
+            const date = document.getElementById('logDate').value;
+            window.location.href = '/admin/logs/filter?level=' + logLevel + '&date=' + date;
+        }
+    </script>
+</body>
+</html>

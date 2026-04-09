@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${title}">Book Vehicle - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="grid grid-2">
+                <div class="booking-form">
+                    <div class="card">
+                        <h2><i class="fas fa-calendar-plus"></i> Book Your Vehicle</h2>
+                        
+                        <form id="bookingForm">
+                            <input type="hidden" id="vehicleId" th:value="${vehicle?.id}">
+                            
+                            <div class="form-group">
+                                <label class="form-label">Pick-up Date</label>
+                                <input type="date" class="form-control" id="pickupDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Return Date</label>
+                                <input type="date" class="form-control" id="returnDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Pick-up Address</label>
+                                <input type="text" class="form-control" id="pickupAddress" placeholder="Enter pickup address" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Pick-up Time</label>
+                                <input type="time" class="form-control" id="pickupTime" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Drop-off Address</label>
+                                <input type="text" class="form-control" id="dropAddress" placeholder="Enter drop-off address" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Drop-off Time</label>
+                                <input type="time" class="form-control" id="dropTime" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Promo Code (Optional)</label>
+                                <div class="promo-input-group">
+                                    <input type="text" class="form-control" id="promoCode" placeholder="Enter promo code">
+                                    <button type="button" class="btn btn-outline-primary" id="validatePromo">Apply</button>
+                                </div>
+                                <div id="promoMessage" class="promo-message"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Additional Services</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="gps">
+                                        <span class="checkmark"></span>
+                                        GPS Navigation (+$5/day)
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="insurance">
+                                        <span class="checkmark"></span>
+                                        Additional Insurance (+$15/day)
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="child-seat">
+                                        <span class="checkmark"></span>
+                                        Child Safety Seat (+$8/day)
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg w-100" id="bookingBtn">
+                                <i class="fas fa-credit-card"></i> Proceed to Payment
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="booking-summary">
+                    <div class="card card-gradient" style="color: white;">
+                        <h3><i class="fas fa-car"></i> Booking Summary</h3>
+                        
+                        <div class="vehicle-preview">
+                            <img src="https://via.placeholder.com/300x200/ffffff/667eea?text=BMW+X5" alt="BMW X5">
+                            <div class="vehicle-info">
+                                <h4>BMW X5 2024</h4>
+                                <p>Luxury SUV • Automatic • 5 Seats</p>
+                            </div>
+                        </div>
+                        
+                        <div class="price-breakdown">
+                            <div class="price-item">
+                                <span>Daily Rate</span>
+                                <span>$120.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Duration</span>
+                                <span id="durationText">0 days</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Subtotal</span>
+                                <span id="subtotal">$0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Additional Services</span>
+                                <span id="servicesTotal">$0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Taxes & Fees</span>
+                                <span id="taxes">$0.00</span>
+                            </div>
+                            <hr style="border-color: rgba(255,255,255,0.3);">
+                            <div class="price-item total">
+                                <span><strong>Total Amount</strong></span>
+                                <span><strong id="totalAmount">$0.00</strong></span>
+                            </div>
+                        </div>
+                        
+                        <div class="booking-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Free Cancellation</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Comprehensive Insurance</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-phone"></i>
+                                <span>24/7 Support</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <style>
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .checkbox-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .vehicle-preview {
+            margin: 1.5rem 0;
+        }
+
+        .vehicle-preview img {
+            width: 100%;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+        }
+
+        .price-breakdown {
+            margin: 1.5rem 0;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .price-item.total {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .booking-features {
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .feature-item i {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script>
+        const dailyRate = 120;
+        const taxRate = 0.12;
+        
+        function calculateTotal() {
+            const pickupDate = new Date(document.getElementById('pickupDate').value);
+            const returnDate = new Date(document.getElementById('returnDate').value);
+            
+            if (pickupDate && returnDate && returnDate > pickupDate) {
+                const days = Math.ceil((returnDate - pickupDate) / (1000 * 60 * 60 * 24));
+                const subtotal = days * dailyRate;
+                
+                // Calculate additional services
+                let servicesTotal = 0;
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.value === 'gps') servicesTotal += 5 * days;
+                    if (checkbox.value === 'insurance') servicesTotal += 15 * days;
+                    if (checkbox.value === 'child-seat') servicesTotal += 8 * days;
+                });
+                
+                const taxes = (subtotal + servicesTotal) * taxRate;
+                const total = subtotal + servicesTotal + taxes;
+                
+                document.getElementById('durationText').textContent = `${days} days`;
+                document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+                document.getElementById('servicesTotal').textContent = `$${servicesTotal.toFixed(2)}`;
+                document.getElementById('taxes').textContent = `$${taxes.toFixed(2)}`;
+                document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+            }
+        }
+        
+        document.getElementById('pickupDate').addEventListener('change', calculateTotal);
+        document.getElementById('returnDate').addEventListener('change', calculateTotal);
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', calculateTotal);
+        });
+        
+        // Promo code validation
+        document.getElementById('validatePromo').addEventListener('click', function() {
+            const promoCode = document.getElementById('promoCode').value.trim();
+            const messageDiv = document.getElementById('promoMessage');
+            
+            if (!promoCode) {
+                messageDiv.innerHTML = '<span class="error">Please enter a promo code</span>';
+                return;
+            }
+            
+            fetch(`/marketing/api/promotions/validate?code=${promoCode}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.valid) {
+                        messageDiv.innerHTML = `<span class="success">${data.message}</span>`;
+                        calculateTotal(); // Recalculate with discount
+                    } else {
+                        messageDiv.innerHTML = `<span class="error">${data.message}</span>`;
+                    }
+                })
+                .catch(error => {
+                    messageDiv.innerHTML = '<span class="error">Error validating promo code</span>';
+                });
+        });
+        
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('pickupDate').min = today;
+        document.getElementById('returnDate').min = today;
+        
+        document.getElementById('pickupDate').addEventListener('change', function() {
+            document.getElementById('returnDate').min = this.value;
+        });
+        
+        // Handle form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const vehicleId = document.getElementById('vehicleId').value;
+            const pickupDate = document.getElementById('pickupDate').value;
+            const returnDate = document.getElementById('returnDate').value;
+            const promoCode = document.getElementById('promoCode').value;
+            const pickupAddress = document.getElementById('pickupAddress').value;
+            const pickupTime = document.getElementById('pickupTime').value;
+            const dropAddress = document.getElementById('dropAddress').value;
+            const dropTime = document.getElementById('dropTime').value;
+            
+            if (!vehicleId) {
+                alert('Vehicle not selected');
+                return;
+            }
+            
+            if (!pickupDate || !returnDate) {
+                alert('Please select pickup and return dates');
+                return;
+            }
+            
+            if (!pickupAddress || !pickupTime || !dropAddress || !dropTime) {
+                alert('Please fill in all pickup and drop-off details');
+                return;
+            }
+            
+            const bookingBtn = document.getElementById('bookingBtn');
+            bookingBtn.disabled = true;
+            bookingBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Booking...';
+            
+            // Get CSRF token
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            
+            const bookingData = {
+                vehicleId: parseInt(vehicleId),
+                startDate: pickupDate,
+                endDate: returnDate,
+                promoCode: promoCode || null,
+                pickupAddress: pickupAddress,
+                pickupTime: pickupTime,
+                dropAddress: dropAddress,
+                dropTime: dropTime
+            };
+            
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [header]: token
+                },
+                body: JSON.stringify(bookingData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    alert('Booking failed: ' + data.message);
+                    bookingBtn.disabled = false;
+                    bookingBtn.innerHTML = '<i class="fas fa-credit-card"></i> Proceed to Payment';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                bookingBtn.disabled = false;
+                bookingBtn.innerHTML = '<i class="fas fa-credit-card"></i> Proceed to Payment';
+            });
+        });
+    </script>
+</body>
+</html>

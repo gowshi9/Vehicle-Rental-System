@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Delivery Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>My Deliveries</h1>
+        
+        <div th:if="${param.success}" class="alert alert-success" th:text="${param.success}"></div>
+        <div th:if="${param.error}" class="alert alert-error" th:text="${param.error}"></div>
+        
+        <div class="delivery-grid">
+            <div th:each="delivery : ${deliveries}" class="delivery-card">
+                <div class="delivery-header">
+                    <h3>Booking #<span th:text="${delivery.booking.id}"></span></h3>
+                    <span class="status" th:classappend="${delivery.status.name().toLowerCase()}" 
+                          th:text="${delivery.status}"></span>
+                </div>
+                
+                <div class="delivery-details">
+                    <p><strong>Vehicle:</strong> <span th:text="${delivery.booking.vehicle.make + ' ' + delivery.booking.vehicle.model}"></span></p>
+                    <p><strong>Customer:</strong> <span th:text="${delivery.booking.customer.username}"></span></p>
+                    <p><strong>Phone:</strong> <span th:text="${delivery.booking.customer.phone}"></span></p>
+                    <p><strong>Scheduled Date:</strong> <span th:text="${delivery.scheduledDate}"></span></p>
+                    <p th:if="${delivery.notes}"><strong>Notes:</strong> <span th:text="${delivery.notes}"></span></p>
+                </div>
+                
+                <div class="delivery-actions" th:if="${delivery.status.name() == 'ASSIGNED'}">
+                    <form th:action="@{/delivery/confirm/{id}(id=${delivery.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-success">Confirm Delivery</button>
+                    </form>
+                    
+                    <button type="button" class="btn btn-danger" onclick="showCancelModal([[${delivery.id}]])">
+                        Cancel Delivery
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(deliveries)}" class="no-deliveries">
+            <p>No deliveries assigned to you at the moment.</p>
+        </div>
+    </div>
+    
+    <!-- Cancel Modal -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content">
+            <h3>Cancel Delivery</h3>
+            <form id="cancelForm" method="post">
+                <div class="form-group">
+                    <label for="reason">Cancellation Reason:</label>
+                    <textarea id="reason" name="reason" required placeholder="Please provide a reason for cancellation..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-danger">Cancel Delivery</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeCancelModal()">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function showCancelModal(deliveryId) {
+            document.getElementById('cancelForm').action = '/delivery/cancel/' + deliveryId;
+            document.getElementById('cancelModal').style.display = 'block';
+        }
+        
+        function closeCancelModal() {
+            document.getElementById('cancelModal').style.display = 'none';
+            document.getElementById('reason').value = '';
+        }
+    </script>
+    
+    <style>
+        .delivery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .delivery-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: white;
+        }
+        
+        .delivery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status.assigned { background: #ffeaa7; color: #2d3436; }
+        .status.confirmed { background: #00b894; color: white; }
+        .status.cancelled { background: #e17055; color: white; }
+        
+        .delivery-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 400px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .no-deliveries {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</body>
+</html>

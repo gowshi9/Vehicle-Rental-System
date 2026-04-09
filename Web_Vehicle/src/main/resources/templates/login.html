@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf?.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
+    <title th:text="${title}">Login - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 400px; margin: 4rem auto; padding: 2rem;">
+        <div class="card">
+            <div class="text-center mb-3">
+                <h1>DriveEase</h1>
+                <h2>Welcome Back</h2>
+                <p>Sign in to your account</p>
+            </div>
+
+            <div th:if="${error}" class="error mb-2" th:text="${error}"></div>
+            <div th:if="${success}" class="success mb-2" th:text="${success}"></div>
+
+            <form th:action="@{/login}" method="post">
+                <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" th:if="${_csrf}"/>
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%;">Sign In</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <p>Don't have an account? <a th:href="@{/auth/register}">Register here</a></p>
+                <p><a th:href="@{/}">← Back to Home</a></p>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <h3>Demo Accounts</h3>
+            <p><strong>Admin:</strong> admin / Admin123!</p>
+            <p><strong>Customer:</strong> customer / Customer123!</p>
+            <p><strong>Finance:</strong> finance / Finance123!</p>
+            <p><strong>Marketing:</strong> marketing / Marketing123!</p>
+            <p><strong>Shop Manager:</strong> shopmanager / ShopManager123!</p>
+            <p><strong>Delivery:</strong> delivery / Delivery123!</p>
+        </div>
+    </div>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

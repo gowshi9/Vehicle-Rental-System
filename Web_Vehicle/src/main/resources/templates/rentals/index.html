@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Rental Management</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Rental Management</h1>
+            
+            <!-- Quote Calculator -->
+            <div class="card">
+                <h2>Get Quote</h2>
+                <form id="quoteForm">
+                    <div class="form-group">
+                        <label class="form-label">Vehicle Class</label>
+                        <select name="vehicleClass" class="form-control" required>
+                            <option value="Sedan">Sedan</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Hatchback">Hatchback</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pickup Date & Time</label>
+                        <input type="datetime-local" name="pickupAt" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dropoff Date & Time</label>
+                        <input type="datetime-local" name="dropoffAt" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expected KM</label>
+                        <input type="number" name="expectedKm" class="form-control" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pricing Strategy</label>
+                        <select name="pricing" class="form-control">
+                            <option value="weekday">Weekday Pricing (5% discount)</option>
+                            <option value="weekend">Weekend Pricing (15% premium)</option>
+                            <option value="seasonal">Seasonal Pricing (varies by month)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Promotions</label>
+                        <div>
+                            <label><input type="checkbox" name="hasCoupon"> Apply Coupon (10% off)</label><br>
+                            <label><input type="checkbox" name="isLoyalMember"> Loyalty Member ($25 off)</label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="getQuote()">Get Quote</button>
+                    <button type="button" class="btn btn-outline" onclick="getPromotionalQuote()">Get Promotional Quote</button>
+                    <div id="quoteResult" style="margin-top: 1rem;"></div>
+                </form>
+            </div>
+            
+            <!-- Vehicle Search -->
+            <div class="card">
+                <h2>Search Vehicles</h2>
+                <form id="searchForm">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-control">
+                                <option value="">All Categories</option>
+                                <option value="Sedan">Sedan</option>
+                                <option value="SUV">SUV</option>
+                                <option value="Hatchback">Hatchback</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Min Seats</label>
+                            <input type="number" name="minSeats" class="form-control" min="2" max="12">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Max Rate ($)</label>
+                            <input type="number" name="maxRate" class="form-control" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fuel Type</label>
+                            <select name="fuelType" class="form-control">
+                                <option value="">All Types</option>
+                                <option value="Gasoline">Gasoline</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="Electric">Electric</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="searchVehicles()">Search</button>
+                    <button type="button" class="btn btn-outline" onclick="allocateVehicle()">Auto-Allocate (Nearest)</button>
+                    <button type="button" class="btn btn-outline" onclick="allocateCheapest()">Auto-Allocate (Cheapest)</button>
+                </form>
+                <div id="searchResults" style="margin-top: 1rem;"></div>
+            </div>
+
+            <!-- Existing Rentals -->
+            <div class="card">
+                <h2>Current Rentals</h2>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Vehicle</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="rental : ${rentals}">
+                                <td th:text="${rental.id}">1</td>
+                                <td th:text="${rental.vehicle?.make + ' ' + rental.vehicle?.model}">Toyota Camry</td>
+                                <td th:text="${rental.customer?.username}">customer</td>
+                                <td th:text="'$' + ${rental.totalAmount}">$150.00</td>
+                                <td>
+                                    <span th:class="'badge badge-' + ${rental.status == 'CREATED' ? 'secondary' : (rental.status == 'PAID' ? 'primary' : (rental.status == 'ACTIVE' ? 'success' : 'warning'))}" 
+                                          th:text="${rental.status}">CREATED</span>
+                                </td>
+                                <td>
+                                    <button th:if="${rental.status == 'CREATED'}" 
+                                            class="btn btn-sm btn-primary" 
+                                            th:onclick="'processPayment(' + ${rental.id} + ')'">Pay</button>
+                                    <button th:if="${rental.status == 'PAID'}" 
+                                            class="btn btn-sm btn-success" 
+                                            th:onclick="'startRental(' + ${rental.id} + ')'">Start</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <a th:href="@{/dashboard/admin}" class="btn">← Back to Dashboard</a>
+        </div>
+    </div>
+    
+    <script>
+        function getQuote() {
+            const form = document.getElementById('quoteForm');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            
+            fetch('/rentals/quote?' + params)
+                .then(response => response.text())
+                .then(amount => {
+                    document.getElementById('quoteResult').innerHTML = 
+                        '<div class="alert alert-success"><strong>Standard Quote: $' + amount + '</strong></div>';
+                })
+                .catch(error => {
+                    document.getElementById('quoteResult').innerHTML = 
+                        '<div class="alert alert-danger">Error getting quote</div>';
+                });
+        }
+        
+        function getPromotionalQuote() {
+            const form = document.getElementById('quoteForm');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            
+            fetch('/rentals/quote/promotions?' + params)
+                .then(response => response.text())
+                .then(amount => {
+                    document.getElementById('quoteResult').innerHTML = 
+                        '<div class="alert alert-success"><strong>Promotional Quote: $' + amount + '</strong></div>';
+                })
+                .catch(error => {
+                    document.getElementById('quoteResult').innerHTML = 
+                        '<div class="alert alert-danger">Error getting promotional quote</div>';
+                });
+        }
+        
+        function searchVehicles() {
+            const form = document.getElementById('searchForm');
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            
+            fetch('/rentals/vehicles/search?' + params)
+                .then(response => response.json())
+                .then(vehicles => {
+                    let html = '<h3>Search Results (' + vehicles.length + ' vehicles)</h3>';
+                    if (vehicles.length > 0) {
+                        html += '<div class="table-container"><table class="table"><thead><tr><th>Make/Model</th><th>Category</th><th>Rate</th><th>Seats</th><th>Fuel</th></tr></thead><tbody>';
+                        vehicles.forEach(v => {
+                            html += `<tr><td>${v.make} ${v.model}</td><td>${v.category}</td><td>$${v.dailyRate}</td><td>${v.seats}</td><td>${v.fuelType}</td></tr>`;
+                        });
+                        html += '</tbody></table></div>';
+                    } else {
+                        html += '<p>No vehicles found matching criteria.</p>';
+                    }
+                    document.getElementById('searchResults').innerHTML = html;
+                })
+                .catch(error => {
+                    document.getElementById('searchResults').innerHTML = 
+                        '<div class="alert alert-danger">Error searching vehicles</div>';
+                });
+        }
+        
+        function allocateVehicle() {
+            const category = document.querySelector('[name="category"]').value || 'Sedan';
+            fetch('/rentals/allocate?category=' + category + '&strategy=nearest')
+                .then(response => response.json())
+                .then(vehicle => {
+                    document.getElementById('searchResults').innerHTML = 
+                        '<div class="alert alert-success"><strong>Allocated (Nearest): ' + vehicle.make + ' ' + vehicle.model + ' - $' + vehicle.dailyRate + '/day</strong></div>';
+                })
+                .catch(error => {
+                    document.getElementById('searchResults').innerHTML = 
+                        '<div class="alert alert-danger">No vehicles available for allocation</div>';
+                });
+        }
+        
+        function allocateCheapest() {
+            const category = document.querySelector('[name="category"]').value || 'Sedan';
+            fetch('/rentals/allocate?category=' + category + '&strategy=cheapest')
+                .then(response => response.json())
+                .then(vehicle => {
+                    document.getElementById('searchResults').innerHTML = 
+                        '<div class="alert alert-success"><strong>Allocated (Cheapest): ' + vehicle.make + ' ' + vehicle.model + ' - $' + vehicle.dailyRate + '/day</strong></div>';
+                })
+                .catch(error => {
+                    document.getElementById('searchResults').innerHTML = 
+                        '<div class="alert alert-danger">No vehicles available for allocation</div>';
+                });
+        }
+        
+        function processPayment(rentalId) {
+            fetch('/rentals/' + rentalId + '/pay', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'method=card'
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert('Payment processed: ' + result.message);
+                location.reload();
+            });
+        }
+    </script>
+</body>
+</html>

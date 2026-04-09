@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${title}">DriveEase - Premium Vehicle Rental</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a th:href="@{/marketing/deals}" class="nav-link"><i class="fas fa-tags"></i> Deals</a></li>
+                <li><a th:href="@{/about}" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a th:href="@{/contact}" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Login</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/register}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Register</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/dashboard}" class="btn btn-primary"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Promotion Banner -->
+    <div th:if="${not #lists.isEmpty(homepagePromotions)}" class="promo-banner">
+        <div class="container">
+            <div th:each="promo : ${homepagePromotions}" class="promo-content">
+                <i class="fas fa-fire"></i>
+                <span th:text="${promo.marketingTitle ?: promo.name} + ' - Use code: ' + ${promo.code} + ' for ' + ${promo.discountPercentage} + '% OFF!'">Black Friday Sale - Use code: BLACKFRIDAY for 25% OFF!</span>
+                <a th:href="@{/marketing/deals}" class="promo-link">View All Deals</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content animate-fade-in">
+                <h1>Drive Your Dreams</h1>
+                <p>Experience premium vehicle rentals with DriveEase. From economy cars to luxury SUVs, we have the perfect ride for every journey and adventure.</p>
+                <div class="hero-buttons">
+                    <a href="/vehicles" class="btn btn-glass">
+                        <i class="fas fa-search"></i> Browse Vehicles
+                    </a>
+                    <a href="/auth/register" class="btn btn-accent">
+                        <i class="fas fa-rocket"></i> Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose DriveEase?</h2>
+                <p>Experience the difference with our premium services and exceptional customer care</p>
+            </div>
+            
+            <div class="grid grid-4">
+                <div class="feature-card animate-fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>Premium Fleet</h3>
+                    <p>Choose from our extensive collection of well-maintained, luxury vehicles from top brands worldwide.</p>
+                </div>
+                
+                <div class="feature-card animate-fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Easy Booking</h3>
+                    <p>Book your perfect vehicle in minutes with our streamlined online reservation system and mobile app.</p>
+                </div>
+                
+                <div class="feature-card animate-fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure & Safe</h3>
+                    <p>Enjoy peace of mind with comprehensive insurance coverage and 24/7 roadside assistance nationwide.</p>
+                </div>
+                
+                <div class="feature-card animate-fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Premium Service</h3>
+                    <p>Experience exceptional customer service with our dedicated support team available around the clock.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Trusted by Thousands</h2>
+                <p>Join our growing community of satisfied customers</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Premium Vehicles</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-secondary);">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Happy Customers</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-accent);">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Locations Worldwide</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-success);">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Customer Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Get on the road in just 4 simple steps</p>
+            </div>
+            
+            <div class="grid grid-4">
+                <div class="card card-glass text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>1. Choose Your Vehicle</h3>
+                    <p>Browse our premium fleet and select the perfect vehicle for your needs and budget.</p>
+                </div>
+                
+                <div class="card card-glass text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>2. Select Dates</h3>
+                    <p>Pick your rental dates and check real-time availability across all locations.</p>
+                </div>
+                
+                <div class="card card-glass text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3>3. Secure Payment</h3>
+                    <p>Complete your reservation with our secure payment system and flexible options.</p>
+                </div>
+                
+                <div class="card card-glass text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3>4. Drive Away</h3>
+                    <p>Pick up your vehicle and enjoy your journey with our premium rental experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vehicle Categories -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Vehicle Categories</h2>
+                <p>Find the perfect vehicle for every occasion</p>
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="card card-gradient text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>Economy Cars</h3>
+                    <p>Fuel-efficient and budget-friendly vehicles perfect for city driving and daily commutes.</p>
+                    <a href="/vehicles?category=economy" class="btn btn-glass mt-3">
+                        <i class="fas fa-arrow-right"></i> View Economy
+                    </a>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-secondary); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-car-side"></i>
+                    </div>
+                    <h3>Luxury Sedans</h3>
+                    <p>Premium comfort and style for business trips and special occasions.</p>
+                    <a href="/vehicles?category=luxury" class="btn btn-glass mt-3">
+                        <i class="fas fa-arrow-right"></i> View Luxury
+                    </a>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-accent); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>SUVs & Trucks</h3>
+                    <p>Spacious and powerful vehicles for family trips and outdoor adventures.</p>
+                    <a href="/vehicles?category=suv" class="btn btn-glass mt-3">
+                        <i class="fas fa-arrow-right"></i> View SUVs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Our Customers Say</h2>
+                <p>Real experiences from our satisfied customers</p>
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <p>"Excellent service and pristine vehicles. DriveEase made our vacation unforgettable!"</p>
+                    <div class="mt-3">
+                        <strong>Sarah Johnson</strong>
+                        <div class="text-muted">Business Executive</div>
+                    </div>
+                </div>
+                
+                <div class="card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <p>"Professional staff, competitive prices, and a seamless booking experience."</p>
+                    <div class="mt-3">
+                        <strong>Michael Chen</strong>
+                        <div class="text-muted">Travel Blogger</div>
+                    </div>
+                </div>
+                
+                <div class="card text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <p>"The luxury SUV was perfect for our family trip. Highly recommend DriveEase!"</p>
+                    <div class="mt-3">
+                        <strong>Emily Rodriguez</strong>
+                        <div class="text-muted">Family Traveler</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section">
+        <div class="container text-center">
+            <div class="card card-gradient" style="max-width: 700px; margin: 0 auto; color: white;">
+                <div class="feature-icon" style="color: white;">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h2>Ready to Start Your Journey?</h2>
+                <p>Join thousands of satisfied customers who trust DriveEase for their transportation needs. Experience the future of vehicle rental today.</p>
+                <div class="hero-buttons mt-4">
+                    <a href="/vehicles" class="btn btn-glass">
+                        <i class="fas fa-car"></i> Browse Vehicles
+                    </a>
+                    <a href="/auth/register" class="btn btn-accent">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="grid grid-4 mb-4">
+                <div>
+                    <h4><i class="fas fa-car"></i> DriveEase</h4>
+                    <p>Premium vehicle rental services with exceptional customer care and luxury fleet.</p>
+                </div>
+                <div>
+                    <h5>Quick Links</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="/vehicles"><i class="fas fa-car"></i> Vehicles</a></li>
+                        <li><a href="/about"><i class="fas fa-info"></i> About Us</a></li>
+                        <li><a href="/contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Services</h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><i class="fas fa-check"></i> Daily Rentals</li>
+                        <li><i class="fas fa-check"></i> Long-term Lease</li>
+                        <li><i class="fas fa-check"></i> Corporate Fleet</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Contact Info</h5>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> info@driveease.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Rental Street, City</p>
+                </div>
+            </div>
+            <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0;">
+            <p>&copy; 2024 DriveEase. All rights reserved. | Premium Vehicle Rental Services</p>
+        </div>
+    </footer>
+
+    <script>
+        // Add smooth scrolling and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all cards and feature elements
+            document.querySelectorAll('.card, .feature-card, .stat-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+
+            // Add floating animation to hero icons
+            const heroIcons = document.querySelectorAll('.feature-icon i');
+            heroIcons.forEach((icon, index) => {
+                icon.style.animation = `float 3s ease-in-out infinite ${index * 0.5}s`;
+            });
+        });
+
+        // Add floating keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+    <style>
+        .promo-banner {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        
+        .promo-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            font-weight: 600;
+        }
+        
+        .promo-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .promo-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+        
+        .promo-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .promo-message {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .promo-message.success { color: #28a745; }
+        .promo-message.error { color: #dc3545; }
+    </style>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Edit Promotion - Marketing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Edit Promotion</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{'/marketing/promotions/' + ${promotion.id} + '/update'}" th:object="${promotion}" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="code" class="form-label">Promotion Code</label>
+                                    <input type="text" class="form-control" id="code" th:field="*{code}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="discountPercent" class="form-label">Discount Percentage</label>
+                                    <input type="number" class="form-control" id="discountPercent" th:field="*{discountPercent}" min="1" max="90" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" th:field="*{title}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" rows="3" required></textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validFrom" class="form-label">Valid From</label>
+                                    <input type="date" class="form-control" id="validFrom" th:field="*{validFrom}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validTo" class="form-label">Valid To</label>
+                                    <input type="date" class="form-control" id="validTo" th:field="*{validTo}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="maxUsage" class="form-label">Max Usage (Optional)</label>
+                                    <input type="number" class="form-control" id="maxUsage" th:field="*{maxUsage}" min="1">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="minRentalDays" class="form-label">Min Rental Days</label>
+                                    <input type="number" class="form-control" id="minRentalDays" th:field="*{minRentalDays}" min="1">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="marketingTitle" class="form-label">Marketing Title</label>
+                                <input type="text" class="form-control" id="marketingTitle" th:field="*{marketingTitle}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="marketingDescription" class="form-label">Marketing Description</label>
+                                <textarea class="form-control" id="marketingDescription" th:field="*{marketingDescription}" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="bannerColor" class="form-label">Banner Color</label>
+                                    <input type="color" class="form-control" id="bannerColor" th:field="*{bannerColor}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="targetSegment" class="form-label">Target Segment</label>
+                                    <select class="form-control" id="targetSegment" th:field="*{targetSegment}">
+                                        <option value="ALL">All Customers</option>
+                                        <option value="NEW">New Customers</option>
+                                        <option value="RETURNING">Returning Customers</option>
+                                        <option value="VIP">VIP Customers</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="showOnHomepage" th:field="*{showOnHomepage}">
+                                <label class="form-check-label" for="showOnHomepage">Show on Homepage</label>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="active" th:field="*{active}">
+                                <label class="form-check-label" for="active">Active</label>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Update Promotion</button>
+                                <a th:href="@{/marketing/promotions}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Transactions - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase Finance
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/dashboard/finance}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a th:href="@{/finance/dashboard}" class="nav-link"><i class="fas fa-chart-line"></i> Finance</a></li>
+                <li><a th:href="@{/finance/transactions}" class="nav-link active"><i class="fas fa-list"></i> Transactions</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1><i class="fas fa-credit-card"></i> All Transactions</h1>
+                <p>Complete transaction history and details</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Payment Transactions</h3>
+                    <span class="badge badge-info" th:text="${#lists.size(payments ?: {})} + ' total'">0 total</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Gateway</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="payment : ${payments}" th:if="${payments != null}">
+                                <td>
+                                    <strong th:text="'#' + ${payment.id}">#001</strong><br>
+                                    <small th:text="${payment.transactionId}" class="text-muted">TXN123</small>
+                                </td>
+                                <td>
+                                    <div th:if="${payment.booking != null and payment.booking.customer != null}">
+                                        <strong th:text="${payment.booking.customer.username}">customer</strong><br>
+                                        <small th:text="${payment.booking.customer.email}" class="text-muted">email</small>
+                                    </div>
+                                    <div th:unless="${payment.booking != null and payment.booking.customer != null}">
+                                        <span class="text-muted">N/A</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong th:text="'$' + ${#numbers.formatDecimal(payment.amount, 0, 2)}">$0.00</strong>
+                                </td>
+                                <td>
+                                    <span th:text="${payment.paymentMethod}">CREDIT_CARD</span>
+                                </td>
+                                <td>
+                                    <span th:class="${payment.status.name() == 'COMPLETED' ? 'badge badge-success' : 
+                                                     payment.status.name() == 'PENDING' ? 'badge badge-warning' : 
+                                                     payment.status.name() == 'REFUNDED' ? 'badge badge-info' : 'badge badge-danger'}"
+                                          th:text="${payment.status.name()}">COMPLETED</span>
+                                </td>
+                                <td>
+                                    <div th:text="${#temporals.format(payment.createdAt, 'MMM dd, yyyy')}">Jan 15, 2024</div>
+                                    <small th:text="${#temporals.format(payment.createdAt, 'HH:mm')}">14:30</small>
+                                </td>
+                                <td>
+                                    <span th:text="${payment.gatewayType}">STRIPE</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${payments == null or #lists.isEmpty(payments)}">
+                                <td colspan="7" class="text-center text-muted">
+                                    <i class="fas fa-credit-card"></i><br>
+                                    No transactions found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .badge { padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .badge-success { background: #10b981; color: white; }
+        .badge-warning { background: #f59e0b; color: white; }
+        .badge-danger { background: #ef4444; color: white; }
+        .badge-info { background: #3b82f6; color: white; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 1rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        .table th { background: #f9fafb; font-weight: 600; }
+        .table-responsive { overflow-x: auto; }
+        .card-header { padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; justify-content: space-between; align-items: center; }
+        .text-muted { color: #6b7280; }
+        .text-center { text-align: center; }
+    </style>
+</body>
+</html>

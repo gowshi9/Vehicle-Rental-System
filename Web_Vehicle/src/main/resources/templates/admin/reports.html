@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Reports - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>System Reports</h1>
+            <div class="grid grid-2" style="gap: 1rem; margin-bottom: 2rem;">
+                <div class="card">
+                    <h3>Vehicle Report</h3>
+                    <p>Total Vehicles: <strong th:text="${totalVehicles}">0</strong></p>
+                    <p>Available: <strong th:text="${availableVehicles}">0</strong></p>
+                    <button class="btn btn-primary btn-sm" onclick="downloadReport('vehicles')">Download PDF</button>
+                </div>
+                <div class="card">
+                    <h3>User Report</h3>
+                    <p>Total Users: <strong th:text="${totalUsers}">0</strong></p>
+                    <p>Active Users: <strong th:text="${totalUsers}">0</strong></p>
+                    <button class="btn btn-primary btn-sm" onclick="downloadReport('users')">Download PDF</button>
+                </div>
+                <div class="card">
+                    <h3>Fleet Status</h3>
+                    <p>Rented: <strong th:text="${rentedVehicles}">0</strong></p>
+                    <p>Available: <strong th:text="${availableVehicles}">0</strong></p>
+                    <button class="btn btn-primary btn-sm" onclick="downloadReport('fleet')">Download PDF</button>
+                </div>
+                <div class="card">
+                    <h3>System Report</h3>
+                    <p>Total Records: <strong th:text="${totalVehicles + totalUsers}">0</strong></p>
+                    <p>System Status: <strong>Active</strong></p>
+                    <button class="btn btn-primary btn-sm" onclick="downloadReport('system')">Download PDF</button>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Generate Custom Report</h3>
+                <form style="display: flex; gap: 1rem; align-items: end;">
+                    <input type="hidden" name="_csrf" th:value="${_csrf?.token}" th:if="${_csrf}"/>
+                    <div class="form-group">
+                        <label class="form-label">Report Type</label>
+                        <select class="form-control" name="reportType">
+                            <option value="vehicles">Vehicle Report</option>
+                            <option value="users">User Report</option>
+                            <option value="fleet">Fleet Status</option>
+                            <option value="system">System Report</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" name="fromDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" name="toDate">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="generateCustomReport()">Generate</button>
+                </form>
+            </div>
+            <a th:href="@{/dashboard/admin}" class="btn">← Back to Dashboard</a>
+        </div>
+    </div>
+    <script>
+        function downloadReport(type) {
+            window.location.href = '/admin/reports/download/' + type;
+        }
+        function generateCustomReport() {
+            const form = document.querySelector('form');
+            const formData = new FormData(form);
+            
+            fetch('/admin/reports/generate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'custom-report.pdf';
+                a.click();
+            });
+        }
+    </script>
+</body>
+</html>

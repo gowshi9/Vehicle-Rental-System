@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a th:href="@{/about}" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a th:href="@{/contact}" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="grid grid-2">
+                <!-- Vehicle Images -->
+                <div class="vehicle-gallery">
+                    <div class="main-image">
+                        <img src="https://via.placeholder.com/600x400/667eea/ffffff?text=BMW+X5" alt="BMW X5" id="mainImage">
+                    </div>
+                    <div class="thumbnail-grid">
+                        <img src="https://via.placeholder.com/150x100/667eea/ffffff?text=Front" alt="Front View" onclick="changeImage(this.src)">
+                        <img src="https://via.placeholder.com/150x100/f093fb/ffffff?text=Side" alt="Side View" onclick="changeImage(this.src)">
+                        <img src="https://via.placeholder.com/150x100/4facfe/ffffff?text=Interior" alt="Interior" onclick="changeImage(this.src)">
+                        <img src="https://via.placeholder.com/150x100/11998e/ffffff?text=Back" alt="Back View" onclick="changeImage(this.src)">
+                    </div>
+                </div>
+
+                <!-- Vehicle Info -->
+                <div class="vehicle-details">
+                    <div class="vehicle-header">
+                        <span class="vehicle-badge luxury">Luxury</span>
+                        <h1>BMW X5 2024</h1>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-text">4.8 (124 reviews)</span>
+                        </div>
+                    </div>
+
+                    <div class="price-section">
+                        <div class="price-main">$120<span>/day</span></div>
+                        <div class="price-info">
+                            <small>Weekly: $750 | Monthly: $2,800</small>
+                        </div>
+                    </div>
+
+                    <div class="vehicle-specs">
+                        <h3><i class="fas fa-cog"></i> Specifications</h3>
+                        <div class="specs-grid">
+                            <div class="spec-item">
+                                <i class="fas fa-users"></i>
+                                <span>5 Passengers</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Automatic</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>Gasoline</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-suitcase"></i>
+                                <span>4 Large Bags</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-snowflake"></i>
+                                <span>Air Conditioning</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-wifi"></i>
+                                <span>WiFi Hotspot</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vehicle-features">
+                        <h3><i class="fas fa-star"></i> Premium Features</h3>
+                        <ul class="features-list">
+                            <li><i class="fas fa-check"></i> Leather Interior</li>
+                            <li><i class="fas fa-check"></i> Navigation System</li>
+                            <li><i class="fas fa-check"></i> Bluetooth Connectivity</li>
+                            <li><i class="fas fa-check"></i> Backup Camera</li>
+                            <li><i class="fas fa-check"></i> Heated Seats</li>
+                            <li><i class="fas fa-check"></i> Premium Sound System</li>
+                        </ul>
+                    </div>
+
+                    <div class="booking-section">
+                        <div class="availability">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Available Now</span>
+                        </div>
+                        <div class="booking-buttons">
+                            <a href="/booking/create?vehicleId=1" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calendar"></i> Book Now
+                            </a>
+                            <a href="/vehicles" class="btn btn-outline">
+                                <i class="fas fa-arrow-left"></i> Back to Vehicles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Info Tabs -->
+            <div class="info-tabs mt-5">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('description')">Description</button>
+                    <button class="tab-btn" onclick="showTab('reviews')">Reviews</button>
+                    <button class="tab-btn" onclick="showTab('policies')">Rental Policies</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="description" class="tab-pane active">
+                        <div class="card">
+                            <h3>Vehicle Description</h3>
+                            <p>Experience luxury and performance with the BMW X5 2024. This premium SUV combines elegant design with cutting-edge technology, making it perfect for both business and leisure travel.</p>
+                            <p>The spacious interior features premium leather seating, advanced infotainment system, and state-of-the-art safety features. Whether you're navigating city streets or exploring scenic routes, the BMW X5 delivers an exceptional driving experience.</p>
+                        </div>
+                    </div>
+
+                    <div id="reviews" class="tab-pane">
+                        <div class="card">
+                            <h3>Customer Reviews</h3>
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <strong>John Smith</strong>
+                                    <div class="rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                                <p>"Excellent vehicle! Clean, comfortable, and perfect for our family vacation. Highly recommend!"</p>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <strong>Sarah Johnson</strong>
+                                    <div class="rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                </div>
+                                <p>"Great car with all the luxury features. The booking process was smooth and customer service was outstanding."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="policies" class="tab-pane">
+                        <div class="card">
+                            <h3>Rental Policies</h3>
+                            <ul>
+                                <li><strong>Age Requirement:</strong> Minimum 25 years old</li>
+                                <li><strong>License:</strong> Valid driver's license required</li>
+                                <li><strong>Insurance:</strong> Comprehensive coverage included</li>
+                                <li><strong>Fuel Policy:</strong> Return with same fuel level</li>
+                                <li><strong>Mileage:</strong> Unlimited mileage included</li>
+                                <li><strong>Cancellation:</strong> Free cancellation up to 24 hours before pickup</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <style>
+        .vehicle-gallery .main-image {
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-gallery .main-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .thumbnail-grid img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .thumbnail-grid img:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .vehicle-header {
+            margin-bottom: 2rem;
+        }
+
+        .vehicle-badge.luxury {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .rating i {
+            color: #fbbf24;
+        }
+
+        .rating-text {
+            margin-left: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .price-section {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .price-main {
+            font-size: 2.5rem;
+            font-weight: 900;
+        }
+
+        .price-main span {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+        }
+
+        .spec-item i {
+            color: var(--primary);
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .features-list i {
+            color: var(--success);
+        }
+
+        .availability {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .booking-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .booking-buttons .btn {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .info-tabs {
+            margin-top: 3rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .review-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-buttons {
+                flex-direction: column;
+            }
+            
+            .tab-buttons {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+
+    <script>
+        function changeImage(src) {
+            document.getElementById('mainImage').src = src;
+        }
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-pane').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

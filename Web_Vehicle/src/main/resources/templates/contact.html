@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${title}">Contact Us - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">DriveEase</a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/}" class="nav-link">Home</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link">Vehicles</a></li>
+                <li><a th:href="@{/about}" class="nav-link">About</a></li>
+                <li><a th:href="@{/contact}" class="nav-link">Contact</a></li>
+                <li><a th:href="@{/login}" class="nav-link">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+<div class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Contact Us</h1>
+            <p>Get in touch with our team - we're here to help!</p>
+        </div>
+    </div>
+</div>
+
+<div class="container section-padding">
+
+    <div class="grid grid-2 mt-3">
+        <div class="card">
+            <h2>Send us a Message</h2>
+            <form th:action="@{/contact}" method="post" th:object="${contactMessage}">
+                <div class="form-group">
+                    <label for="name" class="form-label">Full Name *</label>
+                    <input type="text" id="name" th:field="*{name}" class="form-control" required>
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" id="email" th:field="*{email}" class="form-control" required>
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number *</label>
+                    <input type="tel" id="phone" th:field="*{phone}" class="form-control" placeholder="1234567890" required>
+                    <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message" class="form-label">Message * (minimum 20 characters)</label>
+                    <textarea id="message" th:field="*{message}" class="form-control" rows="5" required minlength="20"></textarea>
+                    <div th:if="${#fields.hasErrors('message')}" th:errors="*{message}" class="error"></div>
+                </div>
+
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+
+        <div>
+            <div class="card">
+                <h3>Contact Information</h3>
+                <div class="mt-2">
+                    <p><strong>📧 Email:</strong> info@driveease.com</p>
+                    <p><strong>📞 Phone:</strong> +1 (555) 123-4567</p>
+                    <p><strong>📍 Address:</strong> 123 Main Street<br>City, State 12345</p>
+                    <p><strong>🕒 Business Hours:</strong><br>
+                    Monday - Friday: 8:00 AM - 8:00 PM<br>
+                    Saturday: 9:00 AM - 6:00 PM<br>
+                    Sunday: 10:00 AM - 4:00 PM</p>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <h3>Frequently Asked Questions</h3>
+                <div class="mt-2">
+                    <h4>What do I need to rent a vehicle?</h4>
+                    <p>A valid driver's license, credit card, and proof of insurance are required.</p>
+                    
+                    <h4>Can I modify or cancel my reservation?</h4>
+                    <p>Yes, you can modify or cancel your reservation up to 24 hours before pickup.</p>
+                    
+                    <h4>Do you offer delivery service?</h4>
+                    <p>Yes, we offer vehicle delivery and pickup services for your convenience.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="card mt-3" style="background: var(--success); color: white;">
+        <p th:text="${success}"></p>
+    </div>
+</div>
+
+    <footer>
+        <div class="container">
+            <p class="text-center">&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

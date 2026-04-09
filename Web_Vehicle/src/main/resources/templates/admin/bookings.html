@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Manage Bookings - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase Admin
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/dashboard/admin}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a th:href="@{/admin/bookings}" class="nav-link active"><i class="fas fa-calendar-check"></i> Bookings</a></li>
+                <li><a th:href="@{/admin/vehicles}" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a th:href="@{/admin/users}" class="nav-link"><i class="fas fa-users"></i> Users</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1><i class="fas fa-calendar-check"></i> Booking Management</h1>
+                <p>Monitor and manage all vehicle bookings and payments</p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-4 mb-4">
+                <div class="card text-center" style="background: var(--gradient-primary); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 th:text="${totalBookings}">0</h3>
+                    <p>Total Bookings</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-success); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 th:text="${paidBookings}">0</h3>
+                    <p>Paid Bookings</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-accent); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 th:text="${pendingBookings}">0</h3>
+                    <p>Pending Payments</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-secondary); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Auto</h3>
+                    <p>Driver Assignment</p>
+                </div>
+            </div>
+
+            <!-- Bookings Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Recent Bookings</h3>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Customer</th>
+                                <th>Vehicle</th>
+                                <th>Dates</th>
+                                <th>Amount</th>
+                                <th>Payment Status</th>
+                                <th>Booking Status</th>
+                                <th>Driver</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="booking : ${bookings}" th:if="${bookings != null}">
+                                <td>
+                                    <strong th:text="'#' + ${booking.id}">#001</strong>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${booking.customer.username}">customer</strong><br>
+                                        <small th:text="${booking.customer.email}" class="text-muted">email</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${booking.vehicle.make + ' ' + booking.vehicle.model}">BMW X5</strong><br>
+                                        <small th:text="${booking.vehicle.licensePlate}" class="text-muted">ABC-123</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${#temporals.format(booking.startDate, 'MMM dd')}">Jan 15</strong> - 
+                                        <strong th:text="${#temporals.format(booking.endDate, 'MMM dd')}">Jan 20</strong><br>
+                                        <small th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(booking.startDate, booking.endDate)} + ' days'" class="text-muted">5 days</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong th:text="'$' + ${#numbers.formatDecimal(booking.total, 0, 2)}">$600.00</strong>
+                                </td>
+                                <td>
+                                    <span th:class="${'badge ' + (booking.paymentStatus.name() == 'PAID' ? 'badge-success' : (booking.paymentStatus.name() == 'UNPAID' ? 'badge-warning' : 'badge-danger'))}"
+                                          th:text="${booking.paymentStatus.name()}">PAID</span>
+                                </td>
+                                <td>
+                                    <span th:class="${'badge ' + (booking.status.name() == 'CONFIRMED' ? 'badge-success' : (booking.status.name() == 'PENDING' ? 'badge-warning' : 'badge-info'))}"
+                                          th:text="${booking.status.name()}">CONFIRMED</span>
+                                </td>
+                                <td>
+                                    <span th:if="${booking.paymentStatus.name() == 'PAID'}" class="text-success">
+                                        <i class="fas fa-check"></i> Auto-Assigned
+                                    </span>
+                                    <span th:unless="${booking.paymentStatus.name() == 'PAID'}" class="text-muted">
+                                        <i class="fas fa-clock"></i> Pending Payment
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-primary" th:onclick="'viewBooking(' + ${booking.id} + ')'">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary" th:if="${booking.paymentStatus.name() == 'UNPAID'}" 
+                                                th:onclick="'sendReminder(' + ${booking.id} + ')'">
+                                            <i class="fas fa-envelope"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${bookings == null or #lists.isEmpty(bookings)}">
+                                <td colspan="9" class="text-center text-muted">
+                                    <i class="fas fa-calendar-times"></i><br>
+                                    No bookings found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DriveEase Admin Panel. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <style>
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .badge-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .badge-info {
+            background: var(--info);
+            color: white;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+        
+        .nav-link.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+    </style>
+
+    <script>
+        function viewBooking(bookingId) {
+            alert('View booking details for ID: ' + bookingId);
+            // Implement booking details modal or redirect
+        }
+        
+        function sendReminder(bookingId) {
+            if (confirm('Send payment reminder to customer?')) {
+                alert('Payment reminder sent for booking ID: ' + bookingId);
+                // Implement reminder functionality
+            }
+        }
+    </script>
+</body>
+</html>

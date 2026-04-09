@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${title}">Finance Dashboard - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase Finance
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/dashboard/finance}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a th:href="@{/finance/dashboard}" class="nav-link active"><i class="fas fa-chart-line"></i> Finance</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1><i class="fas fa-chart-line"></i> Finance Dashboard</h1>
+                <p>Monitor revenue, payments, and financial analytics</p>
+            </div>
+            
+            <!-- Dashboard Metrics -->
+            <div class="grid grid-4 mb-4">
+                <div class="card text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 th:text="'$' + ${#numbers.formatDecimal(monthlyRevenue ?: 0, 0, 2)}">$0</h3>
+                    <p>Monthly Revenue</p>
+                </div>
+                
+                <div class="card text-center" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3 th:text="${totalPayments ?: 0}">0</h3>
+                    <p>Total Payments</p>
+                </div>
+                
+                <div class="card text-center" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 th:text="${pendingPayments ?: 0}">0</h3>
+                    <p>Pending Payments</p>
+                </div>
+                
+                <div class="card text-center" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-trending-up"></i>
+                    </div>
+                    <h3>
+                        <span th:if="${growthRate >= 0}" th:text="'+' + ${#numbers.formatDecimal(growthRate ?: 0, 0, 1)} + '%'">+0%</span>
+                        <span th:unless="${growthRate >= 0}" th:text="${#numbers.formatDecimal(growthRate ?: 0, 0, 1)} + '%'">0%</span>
+                    </h3>
+                    <p>Growth Rate</p>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3><i class="fas fa-filter"></i> Filters & Reports</h3>
+                </div>
+                <form method="get" th:action="@{/finance/dashboard}" class="filter-form">
+                    <div class="grid grid-5">
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" name="startDate" class="form-control" th:value="${startDate}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Date</label>
+                            <input type="date" name="endDate" class="form-control" th:value="${endDate}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-control">
+                                <option value="">All Status</option>
+                                <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">Pending</option>
+                                <option value="COMPLETED" th:selected="${selectedStatus == 'COMPLETED'}">Completed</option>
+                                <option value="FAILED" th:selected="${selectedStatus == 'FAILED'}">Failed</option>
+                                <option value="REFUNDED" th:selected="${selectedStatus == 'REFUNDED'}">Refunded</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Filter
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="button" class="btn btn-accent w-100" onclick="exportReport()">
+                                <i class="fas fa-download"></i> Export CSV
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-5 mb-4">
+                <div class="card text-center" style="background: var(--gradient-success); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3 th:text="'$' + ${#numbers.formatDecimal(totalRevenue, 0, 2)}">$0.00</h3>
+                    <p>Total Revenue</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-warning); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 th:text="${pendingCount}">0</h3>
+                    <p>Pending Payments</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-primary); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 th:text="${completedCount}">0</h3>
+                    <p>Completed</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-danger); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <h3 th:text="${refundedCount}">0</h3>
+                    <p>Refunded</p>
+                </div>
+                
+                <div class="card text-center" style="background: var(--gradient-info); color: white;">
+                    <div class="feature-icon" style="color: white;">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 th:text="${finishedDeliveries}">0</h3>
+                    <p>Deliveries Done</p>
+                </div>
+            </div>
+
+            <!-- Payments Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-credit-card"></i> Payment Transactions</h3>
+                    <span class="badge badge-info" th:text="${totalPayments} + ' total'">0 total</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>Customer</th>
+                                <th>Vehicle</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Delivery</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="payment : ${payments}" th:if="${payments != null}">
+                                <td>
+                                    <strong th:text="'#' + ${payment.id}">#001</strong><br>
+                                    <small th:text="${payment.transactionId}" class="text-muted">TXN123</small>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${payment.booking.customer.username}">customer</strong><br>
+                                        <small th:text="${payment.booking.customer.email}" class="text-muted">email</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong th:text="${payment.booking.vehicle.make + ' ' + payment.booking.vehicle.model}">BMW X5</strong><br>
+                                        <small th:text="${payment.booking.vehicle.licensePlate}" class="text-muted">ABC-123</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong th:text="'$' + ${#numbers.formatDecimal(payment.amount, 0, 2)}">$600.00</strong>
+                                </td>
+                                <td>
+                                    <span th:text="${payment.paymentMethod}">CREDIT_CARD</span><br>
+                                    <small th:text="${payment.gatewayType}" class="text-muted">STRIPE</small>
+                                </td>
+                                <td>
+                                    <span th:class="${payment.status.name() == 'COMPLETED' ? 'badge badge-success' : 
+                                                     payment.status.name() == 'PENDING' ? 'badge badge-warning' : 
+                                                     payment.status.name() == 'REFUNDED' ? 'badge badge-info' : 'badge badge-danger'}"
+                                          th:text="${payment.status.name()}">COMPLETED</span>
+                                </td>
+                                <td>
+                                    <div th:text="${#temporals.format(payment.createdAt, 'MMM dd, yyyy')}">Jan 15, 2024</div>
+                                    <small th:text="${#temporals.format(payment.createdAt, 'HH:mm')}" class="text-muted">14:30</small>
+                                </td>
+                                <td>
+                                    <span th:if="${payment.status.name() == 'COMPLETED'}" class="text-success">
+                                        <i class="fas fa-check"></i> Auto-Assigned
+                                    </span>
+                                    <span th:unless="${payment.status.name() == 'COMPLETED'}" class="text-muted">
+                                        <i class="fas fa-clock"></i> Pending
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-primary" th:onclick="'viewPayment(' + ${payment.id} + ')'">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button th:if="${payment.status.name() == 'COMPLETED'}" 
+                                                class="btn btn-sm btn-warning" 
+                                                th:onclick="'processRefund(' + ${payment.id} + ', ' + ${payment.amount} + ')'">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${payments == null or #lists.isEmpty(payments)}">
+                                <td colspan="9" class="text-center text-muted">
+                                    <i class="fas fa-credit-card"></i><br>
+                                    No payments found for selected criteria
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .filter-form { padding: 1.5rem; }
+        .badge { padding: 0.25rem 0.5rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .badge-success { background: var(--success); color: white; }
+        .badge-warning { background: var(--warning); color: white; }
+        .badge-danger { background: var(--danger); color: white; }
+        .badge-info { background: var(--info); color: white; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .table th { background: var(--bg-secondary); font-weight: 600; }
+        .table-responsive { overflow-x: auto; }
+        .btn-group { display: flex; gap: 0.25rem; }
+        .card-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg-secondary); display: flex; justify-content: space-between; align-items: center; }
+        .nav-link.active { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        .w-100 { width: 100%; }
+    </style>
+
+    <script>
+        function exportReport() {
+            const startDate = document.querySelector('input[name="startDate"]').value;
+            const endDate = document.querySelector('input[name="endDate"]').value;
+            if (!startDate || !endDate) { alert('Please select both start and end dates'); return; }
+            window.location.href = `/finance/reports/export?startDate=${startDate}&endDate=${endDate}&format=csv`;
+        }
+        
+        function processRefund(paymentId, amount) {
+            if (confirm(`Process refund of $${amount} for payment #${paymentId}?`)) {
+                const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                fetch(`/finance/payment/${paymentId}/refund`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', [header]: token },
+                    body: `amount=${amount}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) { alert('Refund processed successfully'); location.reload(); }
+                    else { alert('Refund failed: ' + data.message); }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

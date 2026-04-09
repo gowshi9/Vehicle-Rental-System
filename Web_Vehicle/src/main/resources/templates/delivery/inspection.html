@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${title}">Vehicle Inspection - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-truck"></i> DriveEase Delivery
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/delivery/dashboard}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" class="nav-link active"><i class="fas fa-clipboard-check"></i> Inspection</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1><i class="fas fa-clipboard-check"></i> <span th:text="${inspectionType == 'PRE' ? 'Pre-Delivery' : 'Post-Delivery'}">Pre-Delivery</span> Inspection</h1>
+                <p>Complete vehicle inspection for delivery #<span th:text="${delivery.id}">001</span></p>
+            </div>
+
+            <div class="grid grid-2">
+                <!-- Vehicle Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-car"></i> Vehicle Details</h3>
+                    </div>
+                    <div class="vehicle-details">
+                        <div class="detail-item">
+                            <label>Make & Model:</label>
+                            <span th:text="${delivery.booking.vehicle.make + ' ' + delivery.booking.vehicle.model}">BMW X5</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>License Plate:</label>
+                            <span th:text="${delivery.booking.vehicle.licensePlate}">ABC-123</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Color:</label>
+                            <span th:text="${delivery.booking.vehicle.color}">Black</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Year:</label>
+                            <span th:text="${delivery.booking.vehicle.year}">2024</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Mileage:</label>
+                            <span th:text="${delivery.booking.vehicle.mileage + ' km'}">15,000 km</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Fuel Type:</label>
+                            <span th:text="${delivery.booking.vehicle.fuelType}">Gasoline</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inspection Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clipboard-list"></i> Inspection Checklist</h3>
+                    </div>
+                    <form id="inspectionForm" enctype="multipart/form-data">
+                        <input type="hidden" name="deliveryId" th:value="${delivery.id}">
+                        <input type="hidden" name="type" th:value="${inspectionType}">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Overall Condition</label>
+                            <select name="condition" class="form-control" required>
+                                <option value="">Select Condition</option>
+                                <option value="EXCELLENT">Excellent</option>
+                                <option value="GOOD">Good</option>
+                                <option value="FAIR">Fair</option>
+                                <option value="POOR">Poor</option>
+                                <option value="DAMAGED">Damaged</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Inspection Photo</label>
+                            <input type="file" name="photo" class="form-control" accept="image/*" required>
+                            <small class="text-muted">Upload a photo of the vehicle's current condition</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Inspection Notes</label>
+                            <textarea name="notes" class="form-control" rows="4" 
+                                      placeholder="Document any damages, issues, or observations..."></textarea>
+                        </div>
+                        
+                        <div class="inspection-checklist">
+                            <h4>Inspection Items</h4>
+                            <div class="checklist-grid">
+                                <label class="checklist-item">
+                                    <input type="checkbox" required>
+                                    <span class="checkmark"></span>
+                                    Exterior Body Condition
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" required>
+                                    <span class="checkmark"></span>
+                                    Tire Condition & Pressure
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" required>
+                                    <span class="checkmark"></span>
+                                    Lights & Indicators
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" required>
+                                    <span class="checkmark"></span>
+                                    Interior Cleanliness
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" required>
+                                    <span class="checkmark"></span>
+                                    Fuel Level
+                                </label>
+                                <label class="checklist-item">
+                                    <input type="checkbox" required>
+                                    <span class="checkmark"></span>
+                                    Documentation Present
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <a th:href="@{/delivery/dashboard}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Submit Inspection
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .vehicle-details { padding: 1.5rem; }
+        .detail-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-item label { font-weight: 600; color: var(--text-secondary); }
+        .inspection-checklist { margin: 1.5rem 0; }
+        .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+        .checklist-item { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); transition: var(--transition); }
+        .checklist-item:hover { background: var(--bg-secondary); }
+        .checklist-item input[type="checkbox"] { width: auto; margin: 0; }
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; }
+        .card-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+        .nav-link.active { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        @media (max-width: 768px) { 
+            .grid-2 { grid-template-columns: 1fr; }
+            .checklist-grid { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+        }
+    </style>
+
+    <script>
+        document.getElementById('inspectionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            
+            // Check if all required checkboxes are checked
+            const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            
+            if (!allChecked) {
+                alert('Please complete all inspection items before submitting.');
+                return;
+            }
+            
+            const submitBtn = document.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            
+            fetch('/delivery/inspection/submit', {
+                method: 'POST',
+                headers: { [header]: token },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Inspection submitted successfully! Awaiting admin approval.');
+                    window.location.href = '/delivery/dashboard';
+                } else {
+                    alert('Failed to submit inspection: ' + data.message);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Submit Inspection';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the inspection.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Submit Inspection';
+            });
+        });
+    </script>
+</body>
+</html>

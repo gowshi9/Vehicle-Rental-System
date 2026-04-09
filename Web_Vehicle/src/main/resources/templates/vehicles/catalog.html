@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Catalog - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link active"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a th:href="@{/about}" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a th:href="@{/contact}" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" style="padding: 4rem 0;">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Our Premium Fleet</h1>
+                <p>Discover the perfect vehicle for your journey from our extensive collection of luxury cars, SUVs, and economy vehicles.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <!-- Filters -->
+            <div class="card mb-4">
+                <h3><i class="fas fa-filter"></i> Filter Vehicles</h3>
+                <div class="grid grid-4">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select id="categoryFilter" class="form-control">
+                            <option value="">All Categories</option>
+                            <option value="economy">Economy</option>
+                            <option value="luxury">Luxury</option>
+                            <option value="suv">SUV</option>
+                            <option value="sports">Sports</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Price Range</label>
+                        <select id="priceFilter" class="form-control">
+                            <option value="">All Prices</option>
+                            <option value="0-50">$0 - $50/day</option>
+                            <option value="50-100">$50 - $100/day</option>
+                            <option value="100+">$100+/day</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fuel Type</label>
+                        <select id="fuelFilter" class="form-control">
+                            <option value="">All Types</option>
+                            <option value="gasoline">Gasoline</option>
+                            <option value="electric">Electric</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class="fas fa-search"></i> Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Grid -->
+            <div class="grid grid-3 vehicle-grid" id="vehicleGrid">
+                <!-- Dynamic Vehicle Cards -->
+                <div th:each="vehicle : ${vehicles}" class="card vehicle-card" 
+                     th:data-category="${vehicle.category}" 
+                     th:data-price="${vehicle.dailyRate}" 
+                     th:data-fuel="${vehicle.fuelType}"
+                     th:data-vehicle-id="${vehicle.id}">
+                    <div class="vehicle-image">
+                        <img th:src="${vehicle.photoUrl ?: '/images/default-car.jpg'}" 
+                             th:alt="${vehicle.make + ' ' + vehicle.model}" 
+                             style="width: 100%; height: 200px; object-fit: cover; border-radius: var(--radius);">
+                        <div class="vehicle-badge" th:text="${vehicle.category}">Category</div>
+                    </div>
+                    <div class="vehicle-info">
+                        <h3 th:text="${vehicle.make + ' ' + vehicle.model}">Vehicle Name</h3>
+                        <p class="text-muted" th:text="${vehicle.description ?: 'Premium vehicle for your journey'}">Description</p>
+                        <div class="vehicle-features">
+                            <span><i class="fas fa-users"></i> <span th:text="${vehicle.seats}">5</span> Seats</span>
+                            <span><i class="fas fa-cog"></i> <span th:text="${vehicle.transmission}">Automatic</span></span>
+                            <span><i class="fas fa-gas-pump"></i> <span th:text="${vehicle.fuelType}">Gasoline</span></span>
+                        </div>
+                        <div class="vehicle-price">
+                            <span class="price">$<span th:text="${vehicle.dailyRate}">50</span><small>/day</small></span>
+                        </div>
+                        <div class="vehicle-actions">
+                            <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-primary">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <a th:href="@{/booking/create(vehicleId=${vehicle.id})}" class="btn btn-accent">
+                                <i class="fas fa-calendar"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DriveEase. All rights reserved. | Premium Vehicle Rental Services</p>
+        </div>
+    </footer>
+
+    <style>
+        .vehicle-card {
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .vehicle-image {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .vehicle-features {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .vehicle-features span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .vehicle-features i {
+            color: var(--primary);
+            margin-right: 0.25rem;
+        }
+
+        .vehicle-price {
+            margin: 1rem 0;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .price small {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .vehicle-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .vehicle-actions .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .nav-link.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+    </style>
+
+    <script src="/js/vehicle-updates.js"></script>
+    <script>
+        function applyFilters() {
+            const category = document.getElementById('categoryFilter').value;
+            const price = document.getElementById('priceFilter').value;
+            const fuel = document.getElementById('fuelFilter').value;
+            
+            const cards = document.querySelectorAll('.vehicle-card');
+            
+            cards.forEach(card => {
+                let show = true;
+                
+                if (category && card.dataset.category !== category) {
+                    show = false;
+                }
+                
+                if (price) {
+                    const cardPrice = parseInt(card.dataset.price);
+                    if (price === '0-50' && cardPrice > 50) show = false;
+                    if (price === '50-100' && (cardPrice <= 50 || cardPrice > 100)) show = false;
+                    if (price === '100+' && cardPrice <= 100) show = false;
+                }
+                
+                if (fuel && card.dataset.fuel !== fuel) {
+                    show = false;
+                }
+                
+                card.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // Add scroll animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.vehicle-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

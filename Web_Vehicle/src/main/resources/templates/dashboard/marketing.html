@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Marketing Dashboard - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/dashboard/marketing}" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a th:href="@{/marketing/campaigns}" class="nav-link"><i class="fas fa-bullhorn"></i> Campaigns</a></li>
+                <li><a th:href="@{/marketing/promotions}" class="nav-link"><i class="fas fa-tags"></i> Promotions</a></li>
+                <li><form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </form></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;">
+        <!-- Header -->
+        <div class="dashboard-header" style="margin-bottom: 2rem;">
+            <h1 style="margin-bottom: 0.5rem;">Marketing Dashboard</h1>
+            <p class="text-muted" style="font-size: var(--font-size-lg);">Manage campaigns, promotions, and customer engagement</p>
+        </div>
+
+        <!-- Marketing Stats -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">12</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Active Campaigns</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--success); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">847</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Promo Codes Used</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--accent); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">2,341</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">New Customers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--secondary); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">18%</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Conversion Rate</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-2" style="gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="card">
+                <div class="card-icon" style="background: var(--primary); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Campaign Management</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Create and manage marketing campaigns</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/marketing/campaigns" class="btn btn-outline btn-sm">
+                        <i class="fas fa-list"></i> View Campaigns
+                    </a>
+                    <a href="/marketing/campaigns/new" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> New Campaign
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--success); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Promotions & Discounts</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Manage promotional codes and discounts</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/marketing/promotions" class="btn btn-outline btn-sm">
+                        <i class="fas fa-tags"></i> View Promos
+                    </a>
+                    <a href="/marketing/promotions/new" class="btn btn-success btn-sm">
+                        <i class="fas fa-plus"></i> Create Promo
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--accent); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Email Marketing</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Send newsletters and promotional emails</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/marketing/emails" class="btn btn-outline btn-sm">
+                        <i class="fas fa-inbox"></i> View Emails
+                    </a>
+                    <a href="/marketing/emails/compose" class="btn btn-accent btn-sm">
+                        <i class="fas fa-edit"></i> Compose
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--secondary); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Analytics & Reports</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Track campaign performance and ROI</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/marketing/analytics" class="btn btn-outline btn-sm">
+                        <i class="fas fa-chart-pie"></i> Analytics
+                    </a>
+                    <a href="/marketing/reports" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-file-alt"></i> Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Campaigns -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;"><i class="fas fa-rocket"></i> Active Campaigns</h3>
+                <a href="/marketing/campaigns" class="btn btn-outline btn-sm">View All</a>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Campaign</th>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Type</th>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Reach</th>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Conversion</th>
+                            <th style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary);">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-size: var(--font-size-sm); font-weight: 600;">Summer Special 2024</td>
+                            <td style="font-size: var(--font-size-sm);">Email</td>
+                            <td style="font-size: var(--font-size-sm);">12,450</td>
+                            <td style="font-size: var(--font-size-sm); color: var(--success);">18.5%</td>
+                            <td><span class="badge" style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: var(--radius); font-size: var(--font-size-xs);">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: var(--font-size-sm); font-weight: 600;">Holiday Promotion</td>
+                            <td style="font-size: var(--font-size-sm);">Social Media</td>
+                            <td style="font-size: var(--font-size-sm);">8,230</td>
+                            <td style="font-size: var(--font-size-sm); color: var(--success);">22.1%</td>
+                            <td><span class="badge" style="background: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: var(--radius); font-size: var(--font-size-xs);">Running</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-chart-area"></i> Performance Metrics</h3>
+            <div class="grid grid-3" style="gap: 1rem;">
+                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--primary);">24,567</div>
+                    <div style="font-size: var(--font-size-sm); color: var(--text-muted);">Email Opens</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--success);">4,523</div>
+                    <div style="font-size: var(--font-size-sm); color: var(--text-muted);">Click-throughs</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--accent);">847</div>
+                    <div style="font-size: var(--font-size-sm); color: var(--text-muted);">Conversions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="text-align: center; color: var(--text-muted); font-size: var(--font-size-sm);">&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

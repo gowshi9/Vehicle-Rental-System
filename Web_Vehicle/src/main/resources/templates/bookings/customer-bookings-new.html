@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">My Bookings - DriveEase</title>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a th:href="@{/customer/bookings}" class="nav-link active"><i class="fas fa-calendar"></i> My Bookings</a></li>
+                <li><a th:href="@{/customer/profile}" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1><i class="fas fa-calendar-check"></i> My Bookings</h1>
+                <p>Track your vehicle rental history and upcoming trips</p>
+            </div>
+
+            <div class="grid grid-1">
+                <div th:each="booking : ${bookings}" th:if="${bookings != null and booking != null}" class="card">
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <div class="booking-id">
+                                <h3>Booking #<span th:text="${booking.id ?: 'N/A'}">001</span></h3>
+                                <span th:class="${'badge ' + (booking.paymentStatus != null and booking.paymentStatus.name() == 'PAID' ? 'badge-success' : 'badge-warning')}"
+                                      th:text="${booking.paymentStatus != null ? booking.paymentStatus.name() : 'UNKNOWN'}">PAID</span>
+                            </div>
+                            <div class="booking-amount">
+                                <h3 th:text="'$' + ${#numbers.formatDecimal(booking.total ?: 0, 0, 2)}">$0.00</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="booking-details">
+                            <div class="vehicle-info" th:if="${booking.vehicle != null}">
+                                <h4 th:text="${booking.vehicle.make + ' ' + booking.vehicle.model}">Vehicle</h4>
+                                <p th:text="${booking.vehicle.licensePlate}" class="text-muted">License</p>
+                            </div>
+                            <div class="vehicle-info" th:unless="${booking.vehicle != null}">
+                                <h4>Vehicle Information Unavailable</h4>
+                            </div>
+                            
+                            <div class="date-info">
+                                <div class="date-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Pick-up: <strong th:text="${booking.startDate != null ? #temporals.format(booking.startDate, 'MMM dd, yyyy') : 'N/A'}">N/A</strong></span>
+                                </div>
+                                <div class="date-item">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <span>Return: <strong th:text="${booking.endDate != null ? #temporals.format(booking.endDate, 'MMM dd, yyyy') : 'N/A'}">N/A</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="booking-actions">
+                            <span th:class="${'status-badge ' + (booking.status != null ? booking.status.name().toLowerCase() : 'unknown')}"
+                                  th:text="${booking.status != null ? booking.status.name() : 'UNKNOWN'}">UNKNOWN</span>
+                            
+                            <div class="action-buttons">
+                                <button th:if="${booking.paymentStatus != null and booking.paymentStatus.name() == 'UNPAID'}" 
+                                        class="btn btn-primary btn-sm"
+                                        th:onclick="|window.location.href='/payment/checkout/' + ${booking.id}|">
+                                    <i class="fas fa-credit-card"></i> Pay Now
+                                </button>
+                                <button class="btn btn-secondary btn-sm" th:onclick="|window.location.href='/customer/bookings/' + ${booking.id}|">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                                <button class="btn btn-sm btn-outline" th:onclick="|extendBooking(${booking.id})|" title="Extend by 1 day">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline" th:onclick="|shortenBooking(${booking.id})|" title="Shorten by 1 day">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" th:if="${booking.paymentStatus != null and booking.paymentStatus.name() == 'PAID'}" th:onclick="|refundBooking(${booking.id})|">
+                                    <i class="fas fa-undo"></i> Refund
+                                </button>
+                                <button class="btn btn-sm btn-danger" th:onclick="|cancelBooking(${booking.id})|">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div th:if="${bookings == null or #lists.isEmpty(bookings)}" class="card text-center">
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3>No Bookings Yet</h3>
+                        <p>You haven't made any bookings yet. Start exploring our vehicle collection!</p>
+                        <a href="/vehicles" class="btn btn-primary">
+                            <i class="fas fa-car"></i> Browse Vehicles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        async function callApi(method, url, body) {
+            const opts = {
+                method: method,
+                headers: {}
+            };
+            if (csrfHeader && csrfToken) opts.headers[csrfHeader] = csrfToken;
+            if (body) {
+                opts.headers['Content-Type'] = 'application/json';
+                opts.body = JSON.stringify(body);
+            }
+            opts.credentials = 'same-origin';
+            const res = await fetch(url, opts);
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({message: res.statusText}));
+                throw new Error(err.message || 'Request failed');
+            }
+            return res.json().catch(() => ({}));
+        }
+
+        function extendBooking(id) {
+            if (!confirm('Extend booking by 1 day?')) return;
+            callApi('POST', `/api/bookings/${id}/adjust?days=1`)
+                .then(r => { alert('Booking extended'); location.reload(); })
+                .catch(e => alert('Error: ' + e.message));
+        }
+
+        function shortenBooking(id) {
+            if (!confirm('Shorten booking by 1 day?')) return;
+            callApi('POST', `/api/bookings/${id}/adjust?days=-1`)
+                .then(r => { alert('Booking shortened'); location.reload(); })
+                .catch(e => alert('Error: ' + e.message));
+        }
+
+        function cancelBooking(id) {
+            if (!confirm('Cancel this booking?')) return;
+            callApi('POST', `/api/bookings/${id}/cancel`)
+                .then(r => { alert('Booking cancelled'); location.reload(); })
+                .catch(e => alert('Error: ' + e.message));
+        }
+
+        function refundBooking(id) {
+            if (!confirm('Refund this booking? This will process a payment refund.')) return;
+            callApi('POST', `/api/bookings/${id}/refund`)
+                .then(r => { alert('Refund processed'); location.reload(); })
+                .catch(e => alert('Error: ' + e.message));
+        }
+    </script>
+
+    <style>
+        .booking-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .booking-details {
+            padding: 1.5rem;
+        }
+        
+        .vehicle-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #6366f1;
+        }
+        
+        .date-info {
+            margin-top: 1rem;
+        }
+        
+        .date-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .date-item i {
+            color: #6366f1;
+            width: 16px;
+        }
+        
+        .booking-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-badge.confirmed, .status-badge.pending { background: #10b981; color: white; }
+        .status-badge.cancelled { background: #ef4444; color: white; }
+        .status-badge.unknown { background: #6b7280; color: white; }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-success { background: #10b981; color: white; }
+        .badge-warning { background: #f59e0b; color: white; }
+        
+        .empty-state {
+            padding: 3rem;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+        
+        .nav-link.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+        }
+        
+        .text-muted { color: #6b7280; }
+        .text-center { text-align: center; }
+    </style>
+</body>
+</html>

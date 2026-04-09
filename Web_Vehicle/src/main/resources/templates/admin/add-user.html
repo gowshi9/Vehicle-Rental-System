@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Add User - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Add New User</h1>
+            <form action="/admin/users/create" method="post">
+                <input type="hidden" name="_csrf" th:value="${_csrf?.token}" th:if="${_csrf}"/>
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" name="phone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select name="role" class="form-control" required>
+                        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                    <a th:href="@{/admin/users}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Admin Dashboard - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/dashboard/admin}" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a th:href="@{/admin/users}" class="nav-link"><i class="fas fa-users"></i> Users</a></li>
+                <li><a th:href="@{/admin/vehicles}" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a th:href="@{/admin/bookings}" class="nav-link"><i class="fas fa-calendar"></i> Bookings</a></li>
+                <li><a th:href="@{/admin/deliveries}" class="nav-link"><i class="fas fa-truck"></i> Deliveries</a></li>
+                <li><a th:href="@{/admin/inspections}" class="nav-link"><i class="fas fa-clipboard-check"></i> Inspections</a></li>
+                <li><form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </form></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;">
+        <!-- Header -->
+        <div class="dashboard-header" style="margin-bottom: 2rem;">
+            <h1 style="margin-bottom: 0.5rem;">Admin Dashboard</h1>
+            <p class="text-muted" style="font-size: var(--font-size-lg);">Manage users, vehicles, and system operations</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">1,247</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--success); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">523</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Total Vehicles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--accent); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">3,891</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--secondary); color: white; width: 48px; height: 48px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-number" style="font-size: var(--font-size-2xl); font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">47</div>
+                <div class="stat-label" style="font-size: var(--font-size-sm); color: var(--text-muted);">Pending Deliveries</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-2" style="gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="card">
+                <div class="card-icon" style="background: var(--primary); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">User Management</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Manage user accounts, roles, and permissions</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/admin/users" class="btn btn-outline btn-sm">
+                        <i class="fas fa-list"></i> Manage Users
+                    </a>
+                    <a href="/admin/users/new" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add User
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--success); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-car-side"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Vehicle Management</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Add, edit, and manage the vehicle fleet</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/admin/vehicles" class="btn btn-outline btn-sm">
+                        <i class="fas fa-list"></i> Manage Vehicles
+                    </a>
+                    <a href="/admin/vehicles/new" class="btn btn-success btn-sm">
+                        <i class="fas fa-plus"></i> Add Vehicle
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--accent); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Booking Management</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">View and manage all customer bookings</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/admin/bookings" class="btn btn-outline btn-sm">
+                        <i class="fas fa-calendar"></i> View Bookings
+                    </a>
+                    <a href="/admin/reports" class="btn btn-accent btn-sm">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--info); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Delivery Tracking</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Monitor vehicle deliveries and driver assignments</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/admin/deliveries" class="btn btn-outline btn-sm">
+                        <i class="fas fa-truck"></i> Track Deliveries
+                    </a>
+                    <a href="/admin/deliveries?status=PENDING" class="btn btn-info btn-sm">
+                        <i class="fas fa-clock"></i> Pending
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--success); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Vehicle Inspections</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Review and approve driver inspection reports</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/admin/inspections" class="btn btn-outline btn-sm">
+                        <i class="fas fa-clipboard-list"></i> View Inspections
+                    </a>
+                    <a href="/admin/inspections?status=PENDING" class="btn btn-success btn-sm">
+                        <i class="fas fa-hourglass-half"></i> Pending
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--warning); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Rental Management</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Manage rentals with pricing strategies and state transitions</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/rentals" class="btn btn-outline btn-sm">
+                        <i class="fas fa-calendar-alt"></i> Manage Rentals
+                    </a>
+                    <a href="/admin/analytics" class="btn btn-warning btn-sm">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--accent); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Design Patterns Demo</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Interactive demonstration of implemented design patterns</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/patterns" class="btn btn-outline btn-sm">
+                        <i class="fas fa-play"></i> View Patterns
+                    </a>
+                    <a href="/api/q/kpis" class="btn btn-accent btn-sm">
+                        <i class="fas fa-database"></i> CQRS API
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--warning); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Pricing Management</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Manage pricing strategies and promotions</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/admin/pricing" class="btn btn-outline btn-sm">
+                        <i class="fas fa-calculator"></i> Pricing Strategies
+                    </a>
+                    <a href="/marketing/promotions" class="btn btn-warning btn-sm">
+                        <i class="fas fa-tags"></i> Promotions
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--info); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">Contact Messages</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">View and respond to customer inquiries</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/admin/contact-messages" class="btn btn-outline btn-sm">
+                        <i class="fas fa-inbox"></i> View Messages
+                    </a>
+                    <a href="/admin/contact-messages" class="btn btn-info btn-sm">
+                        <i class="fas fa-sms"></i> Send SMS
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: var(--secondary); color: white; width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3 style="margin-bottom: 0.5rem;">System Settings</h3>
+                <p class="text-muted" style="margin-bottom: 1rem; font-size: var(--font-size-sm);">Configure system settings and preferences</p>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/admin/settings" class="btn btn-outline btn-sm">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <a href="/admin/logs" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-file-alt"></i> View Logs
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;"><i class="fas fa-chart-line"></i> Recent Activity</h3>
+                <a href="/admin/analytics" class="btn btn-outline btn-sm">View Analytics</a>
+            </div>
+            <div class="grid grid-3" style="gap: 1rem;">
+                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--primary);">24</div>
+                    <div style="font-size: var(--font-size-sm); color: var(--text-muted);">New Users Today</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--success);">89</div>
+                    <div style="font-size: var(--font-size-sm); color: var(--text-muted);">Bookings Today</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <div style="font-size: var(--font-size-xl); font-weight: 700; color: var(--accent);">$12,450</div>
+                    <div style="font-size: var(--font-size-sm); color: var(--text-muted);">Revenue Today</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-server"></i> System Status</h3>
+            <div class="grid grid-2" style="gap: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <span style="font-size: var(--font-size-sm);">Database</span>
+                    <span style="color: var(--success); font-weight: 600; font-size: var(--font-size-sm);"><i class="fas fa-check-circle"></i> Online</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <span style="font-size: var(--font-size-sm);">Payment Gateway</span>
+                    <span style="color: var(--success); font-weight: 600; font-size: var(--font-size-sm);"><i class="fas fa-check-circle"></i> Online</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <span style="font-size: var(--font-size-sm);">Email Service</span>
+                    <span style="color: var(--success); font-weight: 600; font-size: var(--font-size-sm);"><i class="fas fa-check-circle"></i> Online</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                    <span style="font-size: var(--font-size-sm);">Backup System</span>
+                    <span style="color: var(--warning); font-weight: 600; font-size: var(--font-size-sm);"><i class="fas fa-exclamation-triangle"></i> Warning</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p style="text-align: center; color: var(--text-muted); font-size: var(--font-size-sm);">&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

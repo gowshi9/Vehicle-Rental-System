@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Manage Promotions - Marketing</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-tags"></i> Promotion Management</h1>
+            <div class="header-actions">
+                <a th:href="@{/marketing/promotions/new}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Promotion
+                </a>
+                <a th:href="@{/admin/pricing}" class="btn btn-outline-secondary">
+                    <i class="fas fa-calculator"></i> Pricing Strategies
+                </a>
+            </div>
+        </div>
+
+        <!-- Promotions Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2>All Promotions</h2>
+                <div>
+                    <span class="badge bg-info me-2" th:text="${promotions.size()} + ' Total'">5 Total</span>
+                    <a th:href="@{/marketing/promotions/new}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Create New
+                    </a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Code</th>
+                            <th>Title</th>
+                            <th>Discount</th>
+                            <th>Valid Period</th>
+                            <th>Status</th>
+                            <th>Usage</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="promotion : ${promotions}">
+                            <td>
+                                <code th:text="${promotion.code}">SAVE25</code>
+                                <span th:if="${promotion.showOnHomepage}" class="badge bg-primary ms-1">Homepage</span>
+                            </td>
+                            <td th:text="${promotion.title}">25% Off Weekend Rentals</td>
+                            <td>
+                                <span class="fw-bold text-success" th:text="${promotion.discountPercent + '%'}">25%</span>
+                            </td>
+                            <td>
+                                <small th:text="${#temporals.format(promotion.validFrom, 'MMM dd')} + ' - ' + ${#temporals.format(promotion.validTo, 'MMM dd, yyyy')}">Nov 20 - Dec 31, 2024</small>
+                            </td>
+                            <td>
+                                <span th:if="${promotion.active}" class="badge bg-success">Active</span>
+                                <span th:unless="${promotion.active}" class="badge bg-secondary">Inactive</span>
+                            </td>
+                            <td>
+                                <span th:if="${promotion.currentUses != null}" th:text="${promotion.currentUses} + '/' + ${promotion.maxUses ?: '∞'}">45/100</span>
+                                <span th:unless="${promotion.currentUses != null}">-</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" th:onclick="'editPromotion(' + ${promotion.id} + ')'">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info toggle-homepage" th:data-id="${promotion.id}">
+                                        <i class="fas fa-home"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" th:onclick="'copyCode(\'' + ${promotion.code} + '\')'">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" th:onclick="'deletePromotion(' + ${promotion.id} + ', \'' + ${promotion.code} + '\')'">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div th:if="${promotions.empty}" class="text-center py-4">
+                    <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No promotions found</h5>
+                    <p class="text-muted">Create your first promotion to get started</p>
+                    <a th:href="@{/marketing/promotions/new}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create First Promotion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .header-actions { display: flex; gap: 1rem; }
+        .info-banner { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+        .info-item { background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px; }
+        .promotions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
+        .promotion-card { background: #f8f9fa; border-radius: 8px; padding: 1.5rem; border-left: 4px solid #28a745; }
+        .promotion-card.inactive { border-left-color: #6c757d; opacity: 0.7; }
+        .promotion-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
+        .promotion-code { background: #007bff; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .promotion-discount { background: #28a745; color: white; padding: 0.5rem; border-radius: 50%; min-width: 50px; text-align: center; font-weight: bold; }
+        .promotion-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 1rem 0; }
+        .stat { display: flex; justify-content: space-between; }
+        .label { font-weight: 600; color: #666; }
+        .promotion-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .comparison-table table { width: 100%; border-collapse: collapse; }
+        .comparison-table th, .comparison-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #ddd; }
+        .comparison-table th { background: #f8f9fa; font-weight: 600; }
+        .badge { background: #17a2b8; color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem; }
+    </style>
+
+    <script>
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Promo code copied: ' + code);
+            });
+        }
+        
+        function editPromotion(id) {
+            window.location.href = `/marketing/promotions/${id}/edit`;
+        }
+        
+        function deletePromotion(id, code) {
+            if (confirm(`Are you sure you want to delete promotion "${code}"?`)) {
+                fetch(`/marketing/promotions/${id}/delete`, {
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting promotion');
+                    }
+                });
+            }
+        }
+
+        document.querySelectorAll('.toggle-homepage').forEach(button => {
+            button.addEventListener('click', function() {
+                const promotionId = this.dataset.id;
+                fetch(`/marketing/promotions/${promotionId}/toggle-homepage`, {
+                    method: 'POST'
+                })
+                .then(response => response.text())
+                .then(result => {
+                    if (result === 'success') {
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

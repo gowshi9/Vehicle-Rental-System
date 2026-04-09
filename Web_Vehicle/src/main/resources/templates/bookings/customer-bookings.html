@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">My Bookings - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a th:href="@{/}" class="navbar-brand">
+                <i class="fas fa-car"></i> DriveEase
+            </a>
+            <ul class="navbar-nav">
+                <li><a th:href="@{/}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a th:href="@{/vehicles}" class="nav-link"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a th:href="@{/customer/bookings}" class="nav-link active"><i class="fas fa-calendar"></i> My Bookings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" style="padding: 3rem 0;">
+        <div class="container">
+            <div class="hero-content">
+                <h1><i class="fas fa-calendar-alt"></i> My Bookings</h1>
+                <p>Manage your vehicle reservations and rental history</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="stats-grid mb-5">
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Active Bookings</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-secondary);">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Total Bookings</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-accent);">
+                    <div class="stat-number">$2,450</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+            </div>
+
+            <div class="booking-tabs mb-4">
+                <button class="tab-btn active" onclick="filterBookings('all')">All Bookings</button>
+                <button class="tab-btn" onclick="filterBookings('active')">Active</button>
+                <button class="tab-btn" onclick="filterBookings('completed')">Completed</button>
+            </div>
+
+            <div class="bookings-list">
+                <div class="booking-card active" data-status="active">
+                    <div class="booking-header">
+                        <div class="booking-status active">
+                            <i class="fas fa-clock"></i> Active
+                        </div>
+                        <div class="booking-id">#BK001</div>
+                    </div>
+                    <div class="booking-content">
+                        <div class="vehicle-info">
+                            <img src="https://via.placeholder.com/120x80/667eea/ffffff?text=BMW+X5" alt="BMW X5">
+                            <div class="vehicle-details">
+                                <h3>BMW X5 2024</h3>
+                                <p class="text-muted">Luxury SUV</p>
+                                <div class="booking-dates">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Dec 15, 2024 - Dec 20, 2024</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="booking-price">
+                            <div class="price">$600</div>
+                            <div class="duration">5 days</div>
+                        </div>
+                        <div class="booking-actions">
+                            <a href="#" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="booking-card completed" data-status="completed">
+                    <div class="booking-header">
+                        <div class="booking-status completed">
+                            <i class="fas fa-check-circle"></i> Completed
+                        </div>
+                        <div class="booking-id">#BK002</div>
+                    </div>
+                    <div class="booking-content">
+                        <div class="vehicle-info">
+                            <img src="https://via.placeholder.com/120x80/f093fb/ffffff?text=Tesla+Model+3" alt="Tesla Model 3">
+                            <div class="vehicle-details">
+                                <h3>Tesla Model 3</h3>
+                                <p class="text-muted">Electric Sedan</p>
+                                <div class="booking-dates">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Nov 10, 2024 - Nov 15, 2024</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="booking-price">
+                            <div class="price">$475</div>
+                            <div class="duration">5 days</div>
+                        </div>
+                        <div class="booking-actions">
+                            <a href="#" class="btn btn-accent btn-sm">
+                                <i class="fas fa-star"></i> Rate & Review
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DriveEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <style>
+        .booking-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .booking-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .booking-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .booking-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .booking-status.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .booking-status.completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .booking-content {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 2rem;
+            padding: 1.5rem;
+            align-items: center;
+        }
+
+        .vehicle-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .vehicle-info img {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius);
+        }
+
+        .booking-dates {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .booking-price .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .booking-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .vehicle-info {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        function filterBookings(status) {
+            const cards = document.querySelectorAll('.booking-card');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            cards.forEach(card => {
+                if (status === 'all' || card.dataset.status === status) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

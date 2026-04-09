@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Special Deals - DriveEase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <section class="hero-deals">
+        <div class="container">
+            <h1><i class="fas fa-fire"></i> Special Deals & Offers</h1>
+            <p>Save big on your next rental with our exclusive promotions!</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="deals-grid">
+                <div th:each="promotion : ${promotions}" class="deal-card">
+                    <div class="deal-header">
+                        <h3 th:text="${promotion.marketingTitle ?: promotion.name}">Black Friday Sale</h3>
+                        <div class="discount-badge">
+                            <span th:text="${promotion.discountPercentage + '%'}">25%</span>
+                            <small>OFF</small>
+                        </div>
+                    </div>
+                    
+                    <div class="deal-content">
+                        <p th:text="${promotion.marketingDescription ?: promotion.description}">Get 25% off on all vehicle rentals.</p>
+                        
+                        <div class="deal-details">
+                            <div class="detail-item">
+                                <i class="fas fa-code"></i>
+                                <span>Code: <strong th:text="${promotion.code}">BLACKFRIDAY</strong></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Valid: <span th:text="${#temporals.format(promotion.validFrom, 'MMM dd')} + ' - ' + ${#temporals.format(promotion.validTo, 'MMM dd')}">Nov 20 - Nov 30</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="deal-actions">
+                            <a th:href="@{/vehicles}" class="btn btn-primary">Book Now</a>
+                            <button class="btn btn-outline-secondary copy-code" th:data-code="${promotion.code}">Copy Code</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .hero-deals { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4rem 0; text-align: center; }
+        .deals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .deal-card { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .deal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .discount-badge { background: #dc3545; color: white; padding: 0.75rem; border-radius: 50%; text-align: center; min-width: 70px; font-weight: bold; }
+        .deal-details { margin: 1.5rem 0; }
+        .detail-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: #666; }
+        .deal-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    </style>
+</body>
+</html>

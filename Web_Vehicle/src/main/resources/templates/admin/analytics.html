@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Analytics - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Analytics Dashboard</h1>
+            
+            <!-- KPI Cards -->
+            <div class="grid grid-4" style="gap: 1rem; margin-bottom: 2rem;">
+                <div class="card" style="text-align: center;">
+                    <h3 style="color: var(--primary);" th:text="${totalVehicles}">0</h3>
+                    <p>Total Vehicles</p>
+                    <small>Fleet Size</small>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <h3 style="color: var(--success);" th:text="${availableVehicles}">0</h3>
+                    <p>Available Vehicles</p>
+                    <small style="color: var(--success);">Ready to Rent</small>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <h3 style="color: var(--accent);" th:text="${rentedVehicles}">0</h3>
+                    <p>Rented Vehicles</p>
+                    <small>Currently Rented</small>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <h3 style="color: var(--secondary);" th:text="${totalUsers}">0</h3>
+                    <p>Total Users</p>
+                    <small style="color: var(--success);">Registered Users</small>
+                </div>
+            </div>
+
+            <!-- Charts Placeholder -->
+            <div class="grid grid-2" style="gap: 1rem; margin-bottom: 2rem;">
+                <div class="card">
+                    <h3>Revenue Trend</h3>
+                    <div style="height: 200px; background: var(--bg-secondary); border-radius: var(--radius); display: flex; align-items: center; justify-content: center;">
+                        <p style="color: var(--text-muted);">Revenue Chart Placeholder</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Booking Trend</h3>
+                    <div style="height: 200px; background: var(--bg-secondary); border-radius: var(--radius); display: flex; align-items: center; justify-content: center;">
+                        <p style="color: var(--text-muted);">Booking Chart Placeholder</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Categories -->
+            <div class="card">
+                <h3>Vehicle Categories</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr><th>Category</th><th>Count</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="category : ${vehiclesByCategory}">
+                                <td th:text="${category[0]}">Category</td>
+                                <td th:text="${category[1]}">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <a th:href="@{/dashboard/admin}" class="btn" style="margin-top: 2rem;">← Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
