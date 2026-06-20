@@ -139,30 +139,6 @@ A comprehensive web-based vehicle rental management system built with Java 17, S
 
 ---
 
-## 📂 File Structure
-
-src/
-├── main/
-│   ├── java/com/vehiclerental/
-│   │   ├── auth/                # Authentication & registration
-│   │   ├── bookings/            # Booking management
-│   │   ├── common/              # Shared entities & repositories
-│   │   ├── config/              # Configuration & security
-│   │   ├── delivery/            # Delivery operations
-│   │   ├── finance/             # Financial management
-│   │   ├── inspection/          # Vehicle inspections
-│   │   ├── marketing/           # Promotions & campaigns
-│   │   ├── users/               # User management
-│   │   └── vehicles/            # Vehicle management
-│   └── resources/
-│       ├── static/
-│       │   ├── css/theme.css    # Dark-blue theme
-│       │   └── js/app.js        # Common JavaScript
-│       └── templates/           # Thymeleaf templates
-└── test/                        # Unit & integration tests
-
----
-
 ## 🌐 Environment Variables
 
 For production deployment, use these environment variables:
